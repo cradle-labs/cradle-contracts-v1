@@ -1,0 +1,15 @@
+{
+  "solidity.packageDefaultDependenciesContractsDirectory": "src",
+  "solidity.packageDefaultDependenciesDirectory": "lib",
+  "solidity.compileUsingRemoteVersion": "v0.8.13",
+  "solidity.formatter": "forge",
+  "[solidity]": {
+    "editor.defaultFormatter": "JuanBlanco.solidity"
+  },
+  "solidity.remappings": [
+    "@openzeppelin/=lib/openzeppelin-contracts/contracts",
+    "@hedera/=lib/hedera-smart-contracts/contracts/system-contracts",
+    "forge-std/=lib/forge-std/src/",
+    "ds-test/=lib/forge-std/lib/ds-test/src/"
+  ]
+}
