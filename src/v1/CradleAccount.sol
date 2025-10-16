@@ -1,5 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
+import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
+import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
+import { IERC20 } from "@openzeppelin/token/ERC20/IERC20.sol";
 
 /**
 CradleAccounts
@@ -12,6 +15,9 @@ CradleAccounts
  */
 
 contract CradleAccount {
+
+    IHederaTokenService constant hts = IHederaTokenService(address(0x167));
+
     event DepositReceived(address depositor, uint256 amount);
     /**
     the protocol address. The protocol acts as the main controller of this account and can deposit or withdraw assets 
@@ -25,6 +31,11 @@ contract CradleAccount {
     bridgers have the ability to bridge assets either on chain or offchain, that means they can make bridge requests to the protocol
      */
     bool public isBridger = false;
+    /**
+    lockedAsset - mapping of locked assets to amount to prevent withdrawing locked assets for this account
+     */
+    mapping(address=>uint256) private lockedAssets;
+
 
     receive() external payable {
         emit DepositReceived(msg.sender, msg.value);
@@ -62,9 +73,8 @@ contract CradleAccount {
     Withdrawals handled by protocol to a wallet that's been pre specified offchain
      */
     function withdraw(address asset, uint256 amount, address to) public onlyProtocol() {
-        // TODO: check if user has token associated then associate with user
         approveSelfSpend(amount, asset);
-        // TODO: transfer asset to the caller
+        transferAsset(to, asset, amount);
     }
 
 
@@ -76,6 +86,52 @@ contract CradleAccount {
         isBridger = status;
     }
 
+
+    /**
+    transferAsset
+     */
+    function transferAsset(address to, address asset, uint256 amount) public onlyProtocol() {
+        uint256 tradableBalance = getTradableBalance(asset);
+        if (amount > tradableBalance) {
+            revert("insufficient assets to complete transfer");
+        }
+        int response = hts.transferFrom(asset, address(this), to, amount);
+
+        if(response != HederaResponseCodes.SUCCESS){
+            revert("Failed to transfer assets");
+        }
+    }
+
+    function getTradableBalance(address asset) public view returns (uint256) {
+        uint256 lockedAmount = lockedAssets[asset];
+        uint256 assetBalance = IERC20(asset).balanceOf(address(this));
+        if (lockedAmount > assetBalance) {
+            return 0;  // or revert with error
+        }
+        return assetBalance - lockedAmount;
+    }
+
+    /**
+    handles locking of asset amounts
+     */
+    function lockAsset(address asset, uint256 amount) public onlyProtocol() {
+        uint256 tradableBalance = getTradableBalance(asset);
+        if(amount > tradableBalance){
+            revert("Insufficient unlocked balance to lock");
+        }
+        lockedAssets[asset] += amount;
+    }
+
+    /**
+    handles unlocking assets 
+     */
+    function unlockAsset(address asset, uint256 amount) public onlyProtocol() {
+        uint256 totalLocked = lockedAssets[asset];
+        require(amount <= totalLocked, "Cannot unlock more than locked");
+        lockedAssets[asset] = totalLocked - amount;
+    }
+
+
 }
 
 /**
@@ -85,4 +141,7 @@ ICradleAccount
 interface ICradleAccount {
     function updateBridgingStatus(bool status) external;
     function withdraw(address asset, uint256 amount, address to) external;
+    function transferAsset(address to, address asset, uint256 amount) external;
+    function lockAsset(address asset, uint256 amount) external;
+    function unlockAsset(address asset, uint256 amount) external;
 }

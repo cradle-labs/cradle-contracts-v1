@@ -94,7 +94,7 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     Protocol handles minting of the assets
      */
     function mint(uint64 amount) public onlyProtocol() {
-        (int _res, int64 _new_supply) = HederaTokenService.mintToken(token, amount, new bytes[](0));
+        (int _res, int64 _new_supply, ) = HederaTokenService.mintToken(token, int64(amount), new bytes[](0));
         
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to mint asset");
@@ -107,7 +107,7 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
      */
     function burn(uint64 amount) public onlyProtocol() {
         
-        (int _res, int64 _new_supply) = HederaTokenService.burnToken(token, amount, new int64[](0));
+        (int _res, int64 _new_supply) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
 
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to burn asset");
@@ -119,7 +119,7 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     Wipes tokens from a holder's account without needing to transfer back to the manager before triggering the wipe
      */
     function wipe(uint64 amount, address account) public onlyProtocol() {
-        int _res = HederaTokenService.wipeTokenAccount(token, account, amount);
+        int _res = HederaTokenService.wipeTokenAccount(token, account, int64(amount));
 
         if(_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to wipe asset from the users account");
