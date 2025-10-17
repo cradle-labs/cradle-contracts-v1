@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
-import { AbstractAssetPriceOracle } from "./AbstractAssetPriceOracle.sol";
 
+import {AbstractAssetPriceOracle} from "./AbstractAssetPriceOracle.sol";
 
 /**
-OrderBookPriceOracle
+ * OrderBookPriceOracle
  */
-contract OrderBookPriceOracle is AbstractAssetPriceOracle {
-
-}
+contract OrderBookPriceOracle is AbstractAssetPriceOracle {}

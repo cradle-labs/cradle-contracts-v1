@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
+
 import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenService.sol";
 import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
@@ -8,28 +9,24 @@ import {IHRC719} from "@hedera/hedera-token-service/IHRC719.sol";
 import {Strings} from "@openzeppelin/utils/Strings.sol";
 
 /**
-AbstractCradleAssetManager
-- This abstract contract offers an interface to be used by all other cradle issued contracts
-- these include:
-- CradleBridgedAssetManager
-- CradleNativeAssetManager
-- CradleLendingAssetManager
+ * AbstractCradleAssetManager
+ * - This abstract contract offers an interface to be used by all other cradle issued contracts
+ * - these include:
+ * - CradleBridgedAssetManager
+ * - CradleNativeAssetManager
+ * - CradleLendingAssetManager
  */
 abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     address public token;
     address public PROTOCOL = address(0x1);
     IHederaTokenService constant hts = IHederaTokenService(address(0x167));
 
-    modifier onlyProtocol(){
-        require(
-            msg.sender == PROTOCOL,
-            "Unauthorised" 
-        );
+    modifier onlyProtocol() {
+        require(msg.sender == PROTOCOL, "Unauthorised");
         _;
     }
 
-    
-    constructor(string memory _name, string memory _symbol ) payable {
+    constructor(string memory _name, string memory _symbol) payable {
         IHederaTokenService.HederaToken memory tokenDetails;
         tokenDetails.name = _name;
         tokenDetails.symbol = _symbol;
@@ -39,49 +36,19 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
         expiry.autoRenewPeriod = 7890000;
         tokenDetails.expiry = expiry;
 
-        IHederaTokenService.TokenKey[]
-            memory keys = new IHederaTokenService.TokenKey[](7);
+        IHederaTokenService.TokenKey[] memory keys = new IHederaTokenService.TokenKey[](7);
 
-        keys[0] = getSingleKey(
-            KeyType.ADMIN,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
-        keys[1] = getSingleKey(
-            KeyType.KYC,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
-        keys[2] = getSingleKey(
-            KeyType.FREEZE,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
-        keys[3] = getSingleKey(
-            KeyType.WIPE,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
-        keys[4] = getSingleKey(
-            KeyType.SUPPLY,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
-        keys[5] = getSingleKey(
-            KeyType.FEE,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
-        keys[6] = getSingleKey(
-            KeyType.PAUSE,
-            KeyValueType.CONTRACT_ID,
-            address(this)
-        );
+        keys[0] = getSingleKey(KeyType.ADMIN, KeyValueType.CONTRACT_ID, address(this));
+        keys[1] = getSingleKey(KeyType.KYC, KeyValueType.CONTRACT_ID, address(this));
+        keys[2] = getSingleKey(KeyType.FREEZE, KeyValueType.CONTRACT_ID, address(this));
+        keys[3] = getSingleKey(KeyType.WIPE, KeyValueType.CONTRACT_ID, address(this));
+        keys[4] = getSingleKey(KeyType.SUPPLY, KeyValueType.CONTRACT_ID, address(this));
+        keys[5] = getSingleKey(KeyType.FEE, KeyValueType.CONTRACT_ID, address(this));
+        keys[6] = getSingleKey(KeyType.PAUSE, KeyValueType.CONTRACT_ID, address(this));
 
         tokenDetails.tokenKeys = keys;
 
-        (int response, address token_address) = HederaTokenService
-            .createFungibleToken(tokenDetails, 0, 8);
+        (int256 response, address token_address) = HederaTokenService.createFungibleToken(tokenDetails, 0, 8);
 
         if (response != HederaResponseCodes.SUCCESS) {
             revert("Failed to create token");
@@ -91,46 +58,42 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     }
 
     /**
-    Protocol handles minting of the assets
+     * Protocol handles minting of the assets
      */
-    function mint(uint64 amount) public onlyProtocol() {
-        (int _res, int64 _new_supply, ) = HederaTokenService.mintToken(token, int64(amount), new bytes[](0));
-        
+    function mint(uint64 amount) public onlyProtocol {
+        (int256 _res, int64 _new_supply,) = HederaTokenService.mintToken(token, int64(amount), new bytes[](0));
+
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to mint asset");
         }
     }
 
-
     /**
-    Protocol handles burning of the asset
+     * Protocol handles burning of the asset
      */
-    function burn(uint64 amount) public onlyProtocol() {
-        
-        (int _res, int64 _new_supply) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
+    function burn(uint64 amount) public onlyProtocol {
+        (int256 _res, int64 _new_supply) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
 
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to burn asset");
         }
     }
 
-
     /**
-    Wipes tokens from a holder's account without needing to transfer back to the manager before triggering the wipe
+     * Wipes tokens from a holder's account without needing to transfer back to the manager before triggering the wipe
      */
-    function wipe(uint64 amount, address account) public onlyProtocol() {
-        int _res = HederaTokenService.wipeTokenAccount(token, account, int64(amount));
+    function wipe(uint64 amount, address account) public onlyProtocol {
+        int256 _res = HederaTokenService.wipeTokenAccount(token, account, int64(amount));
 
-        if(_res != HederaResponseCodes.SUCCESS) {
+        if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to wipe asset from the users account");
         }
     }
 
-
     /**
-    handles mint and token transfer in a single transaction 
+     * handles mint and token transfer in a single transaction
      */
-    function airdropTokens(address target, uint64 amount) public onlyProtocol() {
+    function airdropTokens(address target, uint64 amount) public onlyProtocol {
         bool isAssociated = IHRC719(token).isAssociated();
 
         if (!isAssociated) {
@@ -152,11 +115,10 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
         transferList.transfers[0] = senderAccount;
         transferList.transfers[1] = recipientAccount;
 
-        IHederaTokenService.TokenTransferList[]
-            memory airdropList = new IHederaTokenService.TokenTransferList[](1);
+        IHederaTokenService.TokenTransferList[] memory airdropList = new IHederaTokenService.TokenTransferList[](1);
         airdropList[0] = transferList;
 
-        int responseCode = hts.airdropTokens(airdropList);
+        int256 responseCode = hts.airdropTokens(airdropList);
 
         if (responseCode != HederaResponseCodes.SUCCESS) {
             revert("Failed to airdrop tokens");
