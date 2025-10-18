@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
+import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenService.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
 
 /**
@@ -59,29 +60,39 @@ contract CradleAccount {
 
     constructor(string memory _controller) onlyProtocol {
         controller = _controller;
-        // TODO: handle max associations
+    }
+
+    function associateToken(address token) public onlyProtocol {
+        int32 responseCode = hts.associateToken(address(this), token);
+
+        if (responseCode != HederaResponseCodes.SUCCESS) {
+            revert("Failed to associate token");
+        }
     }
 
     /**
      * When withdrawals are occuring the account has to approve itself to spend the amount
      */
     function approveSelfSpend(uint256 amount, address asset) private {
-        // TODO: approve spending
+        int32 responseCode = hts.approve(asset, address(this), amount);
+
+        if (responseCode != HederaResponseCodes.SUCCESS) {
+            revert("Failed to associate token");
+        }
     }
 
     /**
      * Depositing to the account can be handled by any wallet
      */
     function deposit(address asset, uint256 amount) public payable {
-        // TODO: check if token's associated then do the association
-        // TODO: approve spending from the user's account
+        hts.approve(asset, msg.sender, amount);
+        hts.transferToken(asset, msg.sender, address(this), int64(uint64(amount)));
     }
 
     /**
      * Withdrawals handled by protocol to a wallet that's been pre specified offchain
      */
     function withdraw(address asset, uint256 amount, address to) public onlyProtocol {
-        approveSelfSpend(amount, asset);
         transferAsset(to, asset, amount);
     }
 
@@ -97,6 +108,7 @@ contract CradleAccount {
      * transferAsset
      */
     function transferAsset(address to, address asset, uint256 amount) public onlyProtocol {
+        approveSelfSpend(amount, asset);
         uint256 tradableBalance = getTradableBalance(asset);
         if (amount > tradableBalance) {
             revert("insufficient assets to complete transfer");
