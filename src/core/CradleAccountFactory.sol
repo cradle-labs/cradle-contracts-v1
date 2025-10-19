@@ -50,7 +50,7 @@ contract CradleAccountFactory is AbstractContractAuthority {
     function createAccount(
         string memory controller,
         uint64 accountAllowList
-    ) external onlyAuthorized returns (address accountAddress) {
+    ) public onlyAuthorized returns (address accountAddress) {
         // Check if account already exists for this controller
         if (accountsByController[controller] != address(0)) {
             revert AccountAlreadyExists(controller);
