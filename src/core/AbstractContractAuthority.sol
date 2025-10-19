@@ -12,19 +12,17 @@ abstract contract AbstractContractAuthority {
     AccessController public acl;
 
     modifier onlyAuthorized() {
-        if(msg.sender != address(this)) {
-            uint64[] memory allowList = _getAllowList(controlAllowList);
-            
-            bool hasAccess = false;
-            for (uint i = 0; i < allowList.length; i++) {
-                if (acl.hasAccess(allowList[i], msg.sender)) {
-                    hasAccess = true;
-                    break;  
-                }
+        uint64[] memory allowList = _getAllowList(controlAllowList);
+
+        bool hasAccess = false;
+        for (uint i = 0; i < allowList.length; i++) {
+            if (acl.hasAccess(allowList[i], msg.sender)) {
+                hasAccess = true;
+                break;
             }
-            
-            require(hasAccess, "Unauthorized");
         }
+
+        require(hasAccess, "Unauthorized");
         _;
     }
 
