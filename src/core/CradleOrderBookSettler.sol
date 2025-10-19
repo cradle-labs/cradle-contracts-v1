@@ -10,7 +10,15 @@ import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
  */
 
 contract CradleOrderBookSettler is AbstractContractAuthority {
-    
+
+    event OrderSettled(
+        address indexed bidder,
+        address indexed asker,
+        address bidAsset,
+        address askAsset,
+        uint256 bidAssetAmount,
+        uint256 askAssetAmount
+    );
 
     constructor(address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
     }
@@ -25,6 +33,6 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
     ) public onlyAuthorized {
         ICradleAccount(_bidder).transferAsset(_asker, askAsset, askAssetAmount);
         ICradleAccount(_asker).transferAsset(_bidder, bidAsset, bidAssetAmount);
-        // TODO: emit settlement event
+        emit OrderSettled(_bidder, _asker, bidAsset, askAsset, bidAssetAmount, askAssetAmount);
     }
 }

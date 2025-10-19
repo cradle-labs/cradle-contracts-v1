@@ -6,6 +6,7 @@ import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenServ
 import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenService.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
 import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
 /**
  * CradleAccounts
  * - act as the main asset holding accounts for all assets in the CradleProtocol
@@ -15,10 +16,17 @@ import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
  *     - Orderbook Trade Settlements
  *     - Asset Bridging
  */
-contract CradleAccount is AbstractContractAuthority {
+contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
     IHederaTokenService constant hts = IHederaTokenService(address(0x167));
 
     event DepositReceived(address depositor, uint256 amount);
+    event AssetLocked(address indexed asset, uint256 amount, uint256 totalLocked);
+    event AssetUnlocked(address indexed asset, uint256 amount, uint256 totalLocked);
+    event LoanAdded(address indexed lender, address indexed collateral, uint256 loanAmount, uint256 collateralAmount, uint256 borrowIndex);
+    event LoanRepaid(address indexed lender, address indexed collateral, uint256 loanAmount, uint256 collateralAmount);
+    event AssetTransferred(address indexed to, address indexed asset, uint256 amount);
+    event TokenAssociated(address indexed token);
+
     /**
      * an offchain identifier tied to this account
      */
@@ -58,6 +66,8 @@ contract CradleAccount is AbstractContractAuthority {
         if (responseCode != HederaResponseCodes.SUCCESS) {
             revert("Failed to associate token");
         }
+
+        emit TokenAssociated(token);
     }
 
     /**
@@ -75,14 +85,23 @@ contract CradleAccount is AbstractContractAuthority {
      * Depositing to the account can be handled by any wallet
      */
     function deposit(address asset, uint256 amount) public payable {
-        hts.approve(asset, msg.sender, amount);
-        hts.transferToken(asset, msg.sender, address(this), int64(uint64(amount)));
+        int64 approveResponse = hts.approve(asset, msg.sender, amount);
+
+        if (approveResponse != HederaResponseCodes.SUCCESS) {
+            revert("Failed to approve token");
+        }
+
+        int64 transferResponse = hts.transferToken(asset, msg.sender, address(this), int64(uint64(amount)));
+
+        if (transferResponse != HederaResponseCodes.SUCCESS) {
+            revert("Failed to transfer token");
+        }
     }
 
     /**
      * Withdrawals handled by protocol to a wallet that's been pre specified offchain
      */
-    function withdraw(address asset, uint256 amount, address to) public onlyAuthorized {
+    function withdraw(address asset, uint256 amount, address to) public onlyAuthorized nonReentrant {
         transferAsset(to, asset, amount);
     }
 
@@ -97,7 +116,7 @@ contract CradleAccount is AbstractContractAuthority {
     /**
      * transferAsset
      */
-    function transferAsset(address to, address asset, uint256 amount) public onlyAuthorized {
+    function transferAsset(address to, address asset, uint256 amount) public onlyAuthorized nonReentrant {
         approveSelfSpend(amount, asset);
         uint256 tradableBalance = getTradableBalance(asset);
         if (amount > tradableBalance) {
@@ -108,6 +127,8 @@ contract CradleAccount is AbstractContractAuthority {
         if (response != HederaResponseCodes.SUCCESS) {
             revert("Failed to transfer assets");
         }
+
+        emit AssetTransferred(to, asset, amount);
     }
 
     function getTradableBalance(address asset) public view returns (uint256) {
@@ -128,6 +149,8 @@ contract CradleAccount is AbstractContractAuthority {
             revert("Insufficient unlocked balance to lock");
         }
         lockedAssets[asset] += amount;
+
+        emit AssetLocked(asset, amount, lockedAssets[asset]);
     }
 
     /**
@@ -137,6 +160,8 @@ contract CradleAccount is AbstractContractAuthority {
         uint256 totalLocked = lockedAssets[asset];
         require(amount <= totalLocked, "Cannot unlock more than locked");
         lockedAssets[asset] = totalLocked - amount;
+
+        emit AssetUnlocked(asset, amount, lockedAssets[asset]);
     }
 
     /**
@@ -153,6 +178,8 @@ contract CradleAccount is AbstractContractAuthority {
         loanCollaterals[lender][collateral] += collateralAmount;
         loanIndexes[lender][collateral] = borrowIndex;
         lockAsset(collateral, collateralAmount);
+
+        emit LoanAdded(lender, collateral, loanAmount, collateralAmount, borrowIndex);
     }
 
     /**
@@ -183,13 +210,22 @@ contract CradleAccount is AbstractContractAuthority {
         address lender,
         address collateral,
         uint256 loanAmount,
-        uint256 collateralAmount
+        uint256 collateralAmount,
+        uint256 borrowIndex
     ) public onlyAuthorized {
         require(loans[lender][collateral] >= loanAmount, "No loans to repay");
         loans[lender][collateral] -= loanAmount;
         loanCollaterals[lender][collateral] -= collateralAmount;
-        loanIndexes[lender][collateral] = 0;
+        // Only reset index if loan is fully repaid
+        if (loans[lender][collateral] == 0) {
+            loanIndexes[lender][collateral] = 0;
+        } else {
+            // Update to current borrow index for partial repayments
+            loanIndexes[lender][collateral] = borrowIndex;
+        }
         unlockAsset(collateral, collateralAmount);
+
+        emit LoanRepaid(lender, collateral, loanAmount, collateralAmount);
     }
 }
 
