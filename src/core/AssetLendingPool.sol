@@ -2,22 +2,23 @@
 pragma solidity ^0.8.13;
 
 import {CradleAccount, ICradleAccount} from "./CradleAccount.sol";
+import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {CradleLendingAssetManager} from "./CradleLendingAssetManager.sol";
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 
 /**
  * The AssetLendingPool holds util logic for the lending pools
  * to be inherited and used in different ways by the CradleBridgedAssetPools and CradleNativeAssetPools
  */
-contract AssetLendingPool {
+contract AssetLendingPool is AbstractContractAuthority {
     // Use 10000 for basis points (1 bp = 0.01%, so 100 = 1%, 10000 = 100%)
     uint256 public constant BASE_POINT = 10000;
     uint256 public constant SECONDS_PER_YEAR = 365.25 days; // 31557600 seconds
 
-    address public PROTOCOL;
     CradleAccount public reserve;
+    CradleAccount public treasury;
 
     // Rates stored as basis points (e.g., 500 = 5%)
-    uint64 public apr;
     uint64 public ltv;
     uint64 public optimalUtilization; // e.g., 8000 = 80%
     uint64 public baseRate; // e.g., 200 = 2%
@@ -40,14 +41,8 @@ contract AssetLendingPool {
 
     mapping(address => uint256) public assetMultiplierOracle;
 
-    modifier onlyProtocol() {
-        require(msg.sender == PROTOCOL, "Unauthorised");
-        _;
-    }
 
     constructor(
-        address _protocol,
-        uint64 _apr,
         uint64 _ltv,
         uint64 _optimalUtilization,
         uint64 _baseRate,
@@ -59,10 +54,12 @@ contract AssetLendingPool {
         AbstractCradleAssetManager _lending,
         string memory yieldAsset,
         string memory yieldAssetSymbol,
-        string memory lendingPool
-    ) {
-        PROTOCOL = _protocol;
-        apr = _apr;
+        string memory lendingPool,
+        address aclContract,
+        uint64 allowList
+    )
+    AbstractContractAuthority (aclContract, allowList)
+     {
         ltv = _ltv;
         optimalUtilization = _optimalUtilization;
         baseRate = _baseRate;
@@ -72,15 +69,16 @@ contract AssetLendingPool {
         liquidationDiscount = _liquidationDiscount;
         reserveFactor = _reserveFactor;
         lendingAsset = _lending;
-        reserve = new CradleAccount(lendingPool);
+        reserve = new CradleAccount(lendingPool, aclContract, uint64(4));
+        string memory treasuryName = string(abi.encodePacked(lendingPool, "", "treasury"));
+        treasury = new CradleAccount(treasuryName, aclContract, uint64(4));
 
         // Start indices at 1e18 for WAD math precision
         borrowIndex = 1e18;
         supplyIndex = 1e18;
         lastUpdatedTimestamp = block.timestamp;
 
-        // Note: Uncomment if CradleLendingAssetManager is available
-        // yieldBearingAsset = new CradleLendingAssetManager(yieldAsset, yieldAssetSymbol);
+        yieldBearingAsset = new CradleLendingAssetManager(yieldAsset, yieldAssetSymbol, aclContract, uint64(1));
 
         totalBorrowed = 0;
         totalSupplied = 0;
@@ -236,7 +234,7 @@ contract AssetLendingPool {
     /**
      * updates the asset's multiplier allowing for borrowing using different assets as collateral
      */
-    function updateOracle(address asset, uint256 multiplier) public onlyProtocol {
+    function updateOracle(address asset, uint256 multiplier) public onlyAuthorized {
         assetMultiplierOracle[asset] = multiplier;
     }
 
@@ -247,7 +245,7 @@ contract AssetLendingPool {
         return assetMultiplierOracle[asset];
     }
 
-    function deposit(address user, uint256 amount) public onlyProtocol {
+    function deposit(address user, uint256 amount) public onlyAuthorized {
         updateIndices();
 
         uint256 yieldTokensToMint = amount / supplyIndex;
@@ -259,7 +257,7 @@ contract AssetLendingPool {
         yieldBearingAsset.airdropTokens(user, uint64(yieldTokensToMint));
     }
 
-    function withdraw(address user, uint256 yieldTokenAmount) public onlyProtocol {
+    function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized {
         updateIndices();
 
         uint256 underlyingAmount = (yieldTokenAmount * supplyIndex);
@@ -273,14 +271,14 @@ contract AssetLendingPool {
         reserve.transferAsset(user, lendingAsset.token(), underlyingAmount);
     }
 
-    function borrow(address user, uint256 collateralAmount, address collateralAsset) public onlyProtocol {
+    function borrow(address user, uint256 collateralAmount, address collateralAsset) public onlyAuthorized {
         updateIndices();
 
         uint256 multiplier = getAssetMultiplier(collateralAsset);
         uint256 collateralValue = collateralAmount * multiplier;
         uint256 maxBorrow = (collateralValue * ltv) / BASE_POINT;
 
-        require(totalSupplied - totalBorrowed >= collateralValue, "Insufficient liquidity");
+        require(totalSupplied - totalBorrowed >= maxBorrow, "Insufficient liquidity");
 
         require(ICradleAccount(user).getLoanAmount(address(this), collateralAsset) == 0, "Existing unpaid dept");
 
@@ -291,7 +289,7 @@ contract AssetLendingPool {
         reserve.transferAsset(user, lendingAsset.token(), maxBorrow);
     }
 
-    function repay(address user, address collateralizedAsset, uint256 repayAmount) public onlyProtocol {
+    function repay(address user, address collateralizedAsset, uint256 repayAmount) public onlyAuthorized {
         updateIndices();
 
         uint256 multiplier = assetMultiplierOracle[collateralizedAsset];
@@ -299,6 +297,8 @@ contract AssetLendingPool {
 
         uint256 loanAmount = ICradleAccount(user).getLoanAmount(address(this), collateralizedAsset);
         uint256 loanIndex = ICradleAccount(user).getLoanBlockIndex(address(this), collateralizedAsset);
+
+        require(repayAmount <= loanAmount, "Excess loan amount");
 
         uint256 repaymentDept = calculateCurrentDebt(repayAmount, loanIndex);
 
@@ -313,12 +313,13 @@ contract AssetLendingPool {
 
         totalBorrowed -= repayAmount;
 
-        ICradleAccount(user).transferAsset(address(reserve), lendingAsset.token(), repaymentDept);
+        ICradleAccount(user).transferAsset(address(reserve), lendingAsset.token(), toPool);
+        ICradleAccount(user).transferAsset(address(treasury), lendingAsset.token(), reserveAmount);
     }
 
     function liquidate(address liquidator, address borrower, uint256 debtToCover, address collateralAsset)
         public
-        onlyProtocol
+        onlyAuthorized
     {
         updateIndices();
 

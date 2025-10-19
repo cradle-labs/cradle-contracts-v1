@@ -7,7 +7,7 @@ import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenServ
 import {KeyHelper} from "@hedera/hedera-token-service/KeyHelper.sol";
 import {IHRC719} from "@hedera/hedera-token-service/IHRC719.sol";
 import {Strings} from "@openzeppelin/utils/Strings.sol";
-
+import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 /**
  * AbstractCradleAssetManager
  * - This abstract contract offers an interface to be used by all other cradle issued contracts
@@ -16,17 +16,11 @@ import {Strings} from "@openzeppelin/utils/Strings.sol";
  * - CradleNativeAssetManager
  * - CradleLendingAssetManager
  */
-abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
+abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, AbstractContractAuthority {
     address public token;
-    address public PROTOCOL = address(0x1);
     IHederaTokenService constant hts = IHederaTokenService(address(0x167));
 
-    modifier onlyProtocol() {
-        require(msg.sender == PROTOCOL, "Unauthorised");
-        _;
-    }
-
-    constructor(string memory _name, string memory _symbol) payable {
+    constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList) payable AbstractContractAuthority(aclContract, allowList) {
         IHederaTokenService.HederaToken memory tokenDetails;
         tokenDetails.name = _name;
         tokenDetails.symbol = _symbol;
@@ -60,8 +54,8 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     /**
      * Protocol handles minting of the assets
      */
-    function mint(uint64 amount) public onlyProtocol {
-        (int256 _res, int64 _new_supply,) = HederaTokenService.mintToken(token, int64(amount), new bytes[](0));
+    function mint(uint64 amount) public onlyAuthorized {
+        (int256 _res,,) = HederaTokenService.mintToken(token, int64(amount), new bytes[](0));
 
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to mint asset");
@@ -71,8 +65,8 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     /**
      * Protocol handles burning of the asset
      */
-    function burn(uint64 amount) public onlyProtocol {
-        (int256 _res, int64 _new_supply) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
+    function burn(uint64 amount) public onlyAuthorized {
+        (int256 _res, ) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
 
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to burn asset");
@@ -82,7 +76,7 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     /**
      * Wipes tokens from a holder's account without needing to transfer back to the manager before triggering the wipe
      */
-    function wipe(uint64 amount, address account) public onlyProtocol {
+    function wipe(uint64 amount, address account) public onlyAuthorized {
         int256 _res = HederaTokenService.wipeTokenAccount(token, account, int64(amount));
 
         if (_res != HederaResponseCodes.SUCCESS) {
@@ -93,7 +87,7 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper {
     /**
      * handles mint and token transfer in a single transaction
      */
-    function airdropTokens(address target, uint64 amount) public onlyProtocol {
+    function airdropTokens(address target, uint64 amount) public onlyAuthorized {
         bool isAssociated = IHRC719(token).isAssociated();
 
         if (!isAssociated) {

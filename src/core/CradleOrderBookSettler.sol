@@ -2,24 +2,18 @@
 pragma solidity ^0.8.13;
 
 import {ICradleAccount} from "./CradleAccount.sol";
+import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 /**
  * CradleOrderBookSettler
  * - handles settling of offchain orders in an atomic way
  * uses the CradleAccount
  */
 
-contract CradleOrderBookSettler {
-    /**
-     * the protocol address. The protocol acts as the main controller of this account and can deposit or withdraw assets
-     */
-    address public constant PROTOCOL = address(0x1);
+contract CradleOrderBookSettler is AbstractContractAuthority {
+    
 
-    modifier onlyProtocol() {
-        require(msg.sender == PROTOCOL, "Operation not authorised");
-        _;
+    constructor(address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
     }
-
-    constructor() {}
 
     function settleOrder(
         address _bidder,
@@ -28,7 +22,7 @@ contract CradleOrderBookSettler {
         address askAsset,
         uint256 bidAssetAmount,
         uint256 askAssetAmount
-    ) public onlyProtocol {
+    ) public onlyAuthorized {
         ICradleAccount(_bidder).transferAsset(_asker, askAsset, askAssetAmount);
         ICradleAccount(_asker).transferAsset(_bidder, bidAsset, bidAssetAmount);
         // TODO: emit settlement event

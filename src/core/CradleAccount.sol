@@ -5,7 +5,7 @@ import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
 import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenService.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
-
+import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 /**
  * CradleAccounts
  * - act as the main asset holding accounts for all assets in the CradleProtocol
@@ -15,15 +15,10 @@ import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
  *     - Orderbook Trade Settlements
  *     - Asset Bridging
  */
-contract CradleAccount {
+contract CradleAccount is AbstractContractAuthority {
     IHederaTokenService constant hts = IHederaTokenService(address(0x167));
 
     event DepositReceived(address depositor, uint256 amount);
-    /**
-     * the protocol address. The protocol acts as the main controller of this account and can deposit or withdraw assets
-     */
-
-    address public constant PROTOCOL = address(0x1);
     /**
      * an offchain identifier tied to this account
      */
@@ -53,17 +48,12 @@ contract CradleAccount {
         emit DepositReceived(msg.sender, msg.value);
     }
 
-    modifier onlyProtocol() {
-        require(msg.sender == PROTOCOL, "Operation not authorised");
-        _;
-    }
-
-    constructor(string memory _controller) onlyProtocol {
+    constructor(string memory _controller, address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
         controller = _controller;
     }
 
-    function associateToken(address token) public onlyProtocol {
-        int32 responseCode = hts.associateToken(address(this), token);
+    function associateToken(address token) public onlyAuthorized {
+        int64 responseCode = hts.associateToken(address(this), token);
 
         if (responseCode != HederaResponseCodes.SUCCESS) {
             revert("Failed to associate token");
@@ -74,7 +64,7 @@ contract CradleAccount {
      * When withdrawals are occuring the account has to approve itself to spend the amount
      */
     function approveSelfSpend(uint256 amount, address asset) private {
-        int32 responseCode = hts.approve(asset, address(this), amount);
+        int64 responseCode = hts.approve(asset, address(this), amount);
 
         if (responseCode != HederaResponseCodes.SUCCESS) {
             revert("Failed to associate token");
@@ -92,7 +82,7 @@ contract CradleAccount {
     /**
      * Withdrawals handled by protocol to a wallet that's been pre specified offchain
      */
-    function withdraw(address asset, uint256 amount, address to) public onlyProtocol {
+    function withdraw(address asset, uint256 amount, address to) public onlyAuthorized {
         transferAsset(to, asset, amount);
     }
 
@@ -100,14 +90,14 @@ contract CradleAccount {
      * updateBridgingStatus:
      * - set to either true or false to allow briding of assets on chain or off chain
      */
-    function updateBridgingStatus(bool status) public onlyProtocol {
+    function updateBridgingStatus(bool status) public onlyAuthorized {
         isBridger = status;
     }
 
     /**
      * transferAsset
      */
-    function transferAsset(address to, address asset, uint256 amount) public onlyProtocol {
+    function transferAsset(address to, address asset, uint256 amount) public onlyAuthorized {
         approveSelfSpend(amount, asset);
         uint256 tradableBalance = getTradableBalance(asset);
         if (amount > tradableBalance) {
@@ -132,7 +122,7 @@ contract CradleAccount {
     /**
      * handles locking of asset amounts
      */
-    function lockAsset(address asset, uint256 amount) public onlyProtocol {
+    function lockAsset(address asset, uint256 amount) public onlyAuthorized {
         uint256 tradableBalance = getTradableBalance(asset);
         if (amount > tradableBalance) {
             revert("Insufficient unlocked balance to lock");
@@ -143,7 +133,7 @@ contract CradleAccount {
     /**
      * handles unlocking assets
      */
-    function unlockAsset(address asset, uint256 amount) public onlyProtocol {
+    function unlockAsset(address asset, uint256 amount) public onlyAuthorized {
         uint256 totalLocked = lockedAssets[asset];
         require(amount <= totalLocked, "Cannot unlock more than locked");
         lockedAssets[asset] = totalLocked - amount;
@@ -158,7 +148,7 @@ contract CradleAccount {
         uint256 loanAmount,
         uint256 collateralAmount,
         uint256 borrowIndex
-    ) public onlyProtocol {
+    ) public onlyAuthorized {
         loans[lender][collateral] += loanAmount;
         loanCollaterals[lender][collateral] += collateralAmount;
         loanIndexes[lender][collateral] = borrowIndex;
@@ -193,9 +183,8 @@ contract CradleAccount {
         address lender,
         address collateral,
         uint256 loanAmount,
-        uint256 collateralAmount,
-        uint256 borrowIndex
-    ) public onlyProtocol {
+        uint256 collateralAmount
+    ) public onlyAuthorized {
         require(loans[lender][collateral] >= loanAmount, "No loans to repay");
         loans[lender][collateral] -= loanAmount;
         loanCollaterals[lender][collateral] -= collateralAmount;
