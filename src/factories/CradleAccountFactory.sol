@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {CradleAccount, ICradleAccount} from "./CradleAccount.sol";
-import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
+import {CradleAccount, ICradleAccount} from "../core/CradleAccount.sol";
+import {AbstractContractAuthority} from "../core/AbstractContractAuthority.sol";
 
 /**
  * @title CradleAccountFactory
