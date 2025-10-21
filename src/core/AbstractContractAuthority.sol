@@ -31,31 +31,8 @@ abstract contract AbstractContractAuthority {
             uint64[] memory list = new uint64[](1);
             list[0] = 0;
             return list;
-        }
-        if (level == 1) {
-            uint64[] memory list = new uint64[](2);
-            list[0] = 0;
-            list[1] = 1;
-            return list;
-        }
-        if (level == 2) {
-            uint64[] memory list = new uint64[](5);
-            list[0] = 0;
-            list[1] = 1;
-            list[2] = 2;
-            list[3] = 3;
-            list[4] = 5;
-            return list;
-        }
-        if (level == 3) {
-            uint64[] memory list = new uint64[](4);
-            list[0] = 0;
-            list[1] = 1;
-            list[2] = 2;
-            list[3] = 3;
-            return list;
-        }
-        if (level == 4) {
+        }else {
+            // TODO: i'm temporarily enabling control access across the board because of uncertainities that I need to verify with actual testing, will reenable more granular control later
             uint64[] memory list = new uint64[](6);
             list[0] = 0;
             list[1] = 1;
@@ -65,14 +42,6 @@ abstract contract AbstractContractAuthority {
             list[5] = 6;
             return list;
         }
-        if (level == 5 || level == 6) {
-            uint64[] memory list = new uint64[](2);
-            list[0] = 0;
-            list[1] = 1;
-            return list;
-        }
-        
-        revert("Invalid access level");
     }
 
     constructor(address aclContract, uint64 _controlAllowList) {

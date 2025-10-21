@@ -21,6 +21,13 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
     );
 
     constructor(address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
+        bytes memory data = abi.encodeWithSignature("grantAccess(uint64,address)", 6, address(this));
+
+        (bool success, ) = aclContract.delegatecall(data);
+
+        if(!success){
+            revert("Failed to grant access to lending pool");
+        }
     }
 
     function settleOrder(

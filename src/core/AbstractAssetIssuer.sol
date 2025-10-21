@@ -19,6 +19,14 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
     constructor(address aclContract, uint64 allowList, address _reserveToken) AbstractContractAuthority(aclContract, allowList) {
         treasury = new CradleAccount("treasury", aclContract, allowList);
         reserveToken = _reserveToken;
+
+        bytes memory data = abi.encodeWithSignature("grantAccess(uint64,address)", 5, address(this));
+
+        (bool success, ) = aclContract.delegatecall(data);
+
+        if(!success){
+            revert("Failed to add contract to allow list");
+        }
     }
 
     function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) internal virtual returns (AbstractCradleAssetManager);
