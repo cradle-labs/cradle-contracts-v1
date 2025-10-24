@@ -5,6 +5,6 @@ import { AbstractCradleAssetManager } from "./AbstractCradleAssetManager.sol";
 
 
 contract NativeAsset is AbstractCradleAssetManager {
-    constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList ) AbstractCradleAssetManager( _name, _symbol, aclContract, allowList) { 
+    constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList ) payable AbstractCradleAssetManager( _name, _symbol, aclContract, allowList) { 
     }
 }

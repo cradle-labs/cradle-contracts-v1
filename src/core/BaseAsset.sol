@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 import { AbstractCradleAssetManager } from "./AbstractCradleAssetManager.sol";
 
 
-contract BridgedAsset is AbstractCradleAssetManager {
+contract BaseAsset is AbstractCradleAssetManager {
     constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList ) payable AbstractCradleAssetManager( _name, _symbol, aclContract, allowList) { 
     }
 }

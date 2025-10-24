@@ -292,6 +292,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         yieldTokenBalance = IERC20(yieldBearingAsset.token()).balanceOf(user);
         underlyingValue = calculateCurrentDeposit(yieldTokenBalance);
         currentSupplyAPY = getSupplyRate();
+
+        return (yieldTokenBalance, underlyingValue, currentSupplyAPY);
     }
 
     /**

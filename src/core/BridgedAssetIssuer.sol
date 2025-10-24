@@ -11,7 +11,7 @@ contract BridgedAssetIssuer is AbstractAssetsIssuer {
     }
 
     function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) override internal returns (AbstractCradleAssetManager) {
-        BridgedAsset asset = new BridgedAsset(_name, _symbol, aclContract, allowList);
+        BridgedAsset asset = new BridgedAsset{value: msg.value}(_name, _symbol, aclContract, allowList);
         return asset;
     }
 }

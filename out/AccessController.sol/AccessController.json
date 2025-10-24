@@ -1,1 +1,562 @@
-{"abi":[{"type":"constructor","inputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"clearLevel","inputs":[{"name":"level","type":"uint64","internalType":"uint64"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"getLevel","inputs":[{"name":"level","type":"uint64","internalType":"uint64"}],"outputs":[{"name":"","type":"address[]","internalType":"address[]"}],"stateMutability":"view"},{"type":"function","name":"getLevelCount","inputs":[{"name":"level","type":"uint64","internalType":"uint64"}],"outputs":[{"name":"","type":"uint256","internalType":"uint256"}],"stateMutability":"view"},{"type":"function","name":"grantAccess","inputs":[{"name":"level","type":"uint64","internalType":"uint64"},{"name":"account","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"grantAccessBatch","inputs":[{"name":"level","type":"uint64","internalType":"uint64"},{"name":"accounts","type":"address[]","internalType":"address[]"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"hasAccess","inputs":[{"name":"level","type":"uint64","internalType":"uint64"},{"name":"account","type":"address","internalType":"address"}],"outputs":[{"name":"","type":"bool","internalType":"bool"}],"stateMutability":"view"},{"type":"function","name":"revokeAccess","inputs":[{"name":"level","type":"uint64","internalType":"uint64"},{"name":"account","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"function","name":"rotateLevel0Key","inputs":[{"name":"oldKey","type":"address","internalType":"address"},{"name":"newKey","type":"address","internalType":"address"}],"outputs":[],"stateMutability":"nonpayable"},{"type":"event","name":"AccessGranted","inputs":[{"name":"level","type":"uint64","indexed":true,"internalType":"uint64"},{"name":"account","type":"address","indexed":true,"internalType":"address"}],"anonymous":false},{"type":"event","name":"AccessRevoked","inputs":[{"name":"level","type":"uint64","indexed":true,"internalType":"uint64"},{"name":"account","type":"address","indexed":true,"internalType":"address"}],"anonymous":false},{"type":"event","name":"LevelCleared","inputs":[{"name":"level","type":"uint64","indexed":true,"internalType":"uint64"}],"anonymous":false},{"type":"error","name":"AddressNotFound","inputs":[]},{"type":"error","name":"AlreadyExists","inputs":[]},{"type":"error","name":"InvalidLevel","inputs":[]},{"type":"error","name":"Unauthorized","inputs":[]}],"bytecode":{"object":"0x608080604052346100a2575f80805260208190527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5805491906801000000000000000083101561008e576001830180825583101561007a578152602090200180546001600160a01b03191633179055610a2790816100a78239f35b634e487b7160e01b82526032600452602482fd5b634e487b7160e01b82526041600452602482fd5b5f80fdfe608060409080825260049182361015610016575f80fd5b5f91823560e01c90816326d6362c146104e3575080632c72f0311461043057806338070443146102f057806366e0211d146102b55780636ae8c1ab146101f45780636bf8e80f146101be578063770609a8146100d75763a52355191461007a575f80fd5b346100d357806003193601126100d35782356001600160a01b03811681036100cf576100a4610532565b916100ae3361056a565b156100c15750906100be916108d8565b80f35b516282b42960e81b81528490fd5b8280fd5b5080fd5b5082346100cf576020806003193601126101ba5767ffffffffffffffff93846100fe610517565b16815280825283812093805193848487549182815201908197855285852090855b8782821061019d5750505050859003601f01601f191685019687118588101761018a575085815282865292518583018190528594938501939290915b82811061016a57505050500390f35b83516001600160a01b03168552869550938101939281019260010161015b565b634e487b7160e01b835260419052602482fd5b83546001600160a01b03168552909301926001928301920161011f565b8380fd5b50346100d357806003193601126100d3576020906101eb6101dd610517565b6101e5610532565b9061066c565b90519015158152f35b508290346100cf57806003193601126100cf5761020f610517565b610217610532565b906102213361056a565b156102a7576001600160a01b03821693841561029957610241838361066c565b61028b57509067ffffffffffffffff61026492169283865285602052852061073e565b7fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8380a380f35b835163119b4fd360e11b8152fd5b835163d1459f7960e01b8152fd5b5050516282b42960e81b8152fd5b50346100d357806003193601126100d3576102ce610517565b6102d6610532565b916102e03361056a565b156100c15750906100be9161079b565b50346100d357806003193601126100d357610309610517565b9060243567ffffffffffffffff9485821161042c573660238301121561042c578181013590868211610428576024830192602436918460051b010111610428576103523361056a565b1561041b5750845b818110610365578580f35b610399906001600160a01b03806103856103808487896108b4565b6108c4565b161515806103fd575b61039e575b50610548565b61035a565b88871690818952886020526103c3878a206103bd61038086898b6108b4565b9061073e565b6103d16103808487896108b4565b16907fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8980a35f610393565b5061041561040f6103808487896108b4565b8861066c565b1561038e565b83516282b42960e81b8152fd5b8580fd5b8480fd5b508290346100cf5760203660031901126100cf5761044c610517565b6104553361056a565b156104d65767ffffffffffffffff169182156104c85750818352826020528220805490838155816104aa575b50507f287b3f897e14ba6ec2824c07650e78576fbc701e6910b6225317f5ae0cc6517d8280a280f35b835260208320908101905b81811015610481578381556001016104b5565b905163d1459f7960e01b8152fd5b50516282b42960e81b8152fd5b919050346100cf5760203660031901126100cf5760209267ffffffffffffffff61050b610517565b16815280845220548152f35b6004359067ffffffffffffffff8216820361052e57565b5f80fd5b602435906001600160a01b038216820361052e57565b5f1981146105565760010190565b634e487b7160e01b5f52601160045260245ffd5b5f60208181526040517fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb58054808352908452929392818301907ff0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f590865b8582821061064f5750505050819003601f01601f1916810167ffffffffffffffff81118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a5761062590610548565b6105f7565b5050505050600190565b5050505090565b634e487b7160e01b85526041600452602485fd5b83546001600160a01b0316855290930192600192830192016105c7565b9067ffffffffffffffff805f9316835260209083825260408420906040519182848254918281520191875284872090875b868282106106f85750505050829003601f01601f191682019081118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a576106f390610548565b6106c5565b83546001600160a01b03168552909301926001928301920161069d565b805482101561072a575f5260205f2001905f90565b634e487b7160e01b5f52603260045260245ffd5b9081549168010000000000000000831015610787578261076691600161078595018155610715565b90919082549060031b9160018060a01b03809116831b921b1916179055565b565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff16915f91838352826020526040832093835b8554808210156108a2576107ca8288610715565b90546001600160a01b038681169260039290831b1c811683146107f957505050506107f490610548565b6107b6565b919697949550925f989298199889810190811161088e5790610766836108226108309487610715565b905490881b1c169185610715565b815497881561087a577f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e3595969798019261086a8484610715565b81939154921b1b191690555580a3565b634e487b7160e01b85526031600452602485fd5b634e487b7160e01b86526011600452602486fd5b604051636054b46960e01b8152600490fd5b919081101561072a5760051b0190565b356001600160a01b038116810361052e5790565b6001600160a01b03918083169182156109df576108f48161056a565b156108a2576109028261056a565b6109cd575f8080526020819052917fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5835b81548110156109c4576109468183610715565b90548589169160031b1c88168114610967575061096290610548565b610933565b94959650610979935061076691610715565b817f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e358180a37fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8180a3565b50505050505050565b60405163119b4fd360e11b8152600490fd5b60405163d1459f7960e01b8152600490fdfea2646970667358221220ea68fb95aad79ef2536946635fa1550aa8195b28016dfc324c169e502c70e85c64736f6c63430008140033","sourceMap":"228:4086:16:-:0;;;;;;;688:3;228:4086;;;;;;;;;;;688:3;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;;228:4086:16;700:10;228:4086;;;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;;;;","linkReferences":{}},"deployedBytecode":{"object":"0x608060409080825260049182361015610016575f80fd5b5f91823560e01c90816326d6362c146104e3575080632c72f0311461043057806338070443146102f057806366e0211d146102b55780636ae8c1ab146101f45780636bf8e80f146101be578063770609a8146100d75763a52355191461007a575f80fd5b346100d357806003193601126100d35782356001600160a01b03811681036100cf576100a4610532565b916100ae3361056a565b156100c15750906100be916108d8565b80f35b516282b42960e81b81528490fd5b8280fd5b5080fd5b5082346100cf576020806003193601126101ba5767ffffffffffffffff93846100fe610517565b16815280825283812093805193848487549182815201908197855285852090855b8782821061019d5750505050859003601f01601f191685019687118588101761018a575085815282865292518583018190528594938501939290915b82811061016a57505050500390f35b83516001600160a01b03168552869550938101939281019260010161015b565b634e487b7160e01b835260419052602482fd5b83546001600160a01b03168552909301926001928301920161011f565b8380fd5b50346100d357806003193601126100d3576020906101eb6101dd610517565b6101e5610532565b9061066c565b90519015158152f35b508290346100cf57806003193601126100cf5761020f610517565b610217610532565b906102213361056a565b156102a7576001600160a01b03821693841561029957610241838361066c565b61028b57509067ffffffffffffffff61026492169283865285602052852061073e565b7fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8380a380f35b835163119b4fd360e11b8152fd5b835163d1459f7960e01b8152fd5b5050516282b42960e81b8152fd5b50346100d357806003193601126100d3576102ce610517565b6102d6610532565b916102e03361056a565b156100c15750906100be9161079b565b50346100d357806003193601126100d357610309610517565b9060243567ffffffffffffffff9485821161042c573660238301121561042c578181013590868211610428576024830192602436918460051b010111610428576103523361056a565b1561041b5750845b818110610365578580f35b610399906001600160a01b03806103856103808487896108b4565b6108c4565b161515806103fd575b61039e575b50610548565b61035a565b88871690818952886020526103c3878a206103bd61038086898b6108b4565b9061073e565b6103d16103808487896108b4565b16907fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8980a35f610393565b5061041561040f6103808487896108b4565b8861066c565b1561038e565b83516282b42960e81b8152fd5b8580fd5b8480fd5b508290346100cf5760203660031901126100cf5761044c610517565b6104553361056a565b156104d65767ffffffffffffffff169182156104c85750818352826020528220805490838155816104aa575b50507f287b3f897e14ba6ec2824c07650e78576fbc701e6910b6225317f5ae0cc6517d8280a280f35b835260208320908101905b81811015610481578381556001016104b5565b905163d1459f7960e01b8152fd5b50516282b42960e81b8152fd5b919050346100cf5760203660031901126100cf5760209267ffffffffffffffff61050b610517565b16815280845220548152f35b6004359067ffffffffffffffff8216820361052e57565b5f80fd5b602435906001600160a01b038216820361052e57565b5f1981146105565760010190565b634e487b7160e01b5f52601160045260245ffd5b5f60208181526040517fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb58054808352908452929392818301907ff0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f590865b8582821061064f5750505050819003601f01601f1916810167ffffffffffffffff81118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a5761062590610548565b6105f7565b5050505050600190565b5050505090565b634e487b7160e01b85526041600452602485fd5b83546001600160a01b0316855290930192600192830192016105c7565b9067ffffffffffffffff805f9316835260209083825260408420906040519182848254918281520191875284872090875b868282106106f85750505050829003601f01601f191682019081118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a576106f390610548565b6106c5565b83546001600160a01b03168552909301926001928301920161069d565b805482101561072a575f5260205f2001905f90565b634e487b7160e01b5f52603260045260245ffd5b9081549168010000000000000000831015610787578261076691600161078595018155610715565b90919082549060031b9160018060a01b03809116831b921b1916179055565b565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff16915f91838352826020526040832093835b8554808210156108a2576107ca8288610715565b90546001600160a01b038681169260039290831b1c811683146107f957505050506107f490610548565b6107b6565b919697949550925f989298199889810190811161088e5790610766836108226108309487610715565b905490881b1c169185610715565b815497881561087a577f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e3595969798019261086a8484610715565b81939154921b1b191690555580a3565b634e487b7160e01b85526031600452602485fd5b634e487b7160e01b86526011600452602486fd5b604051636054b46960e01b8152600490fd5b919081101561072a5760051b0190565b356001600160a01b038116810361052e5790565b6001600160a01b03918083169182156109df576108f48161056a565b156108a2576109028261056a565b6109cd575f8080526020819052917fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5835b81548110156109c4576109468183610715565b90548589169160031b1c88168114610967575061096290610548565b610933565b94959650610979935061076691610715565b817f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e358180a37fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8180a3565b50505050505050565b60405163119b4fd360e11b8152600490fd5b60405163d1459f7960e01b8152600490fdfea2646970667358221220ea68fb95aad79ef2536946635fa1550aa8195b28016dfc324c169e502c70e85c64736f6c63430008140033","sourceMap":"228:4086:16:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;:::i;:::-;1302:10;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;1346:1;;;;;:::i;:::-;228:4086;;1284:52;228:4086;-1:-1:-1;;;1322:14:16;;228:4086;;1322:14;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;228:4086:16;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;;;;-1:-1:-1;228:4086:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;-1:-1:-1;228:4086:16;;;;;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;:::i;:::-;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;:::i;:::-;1302:10;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;-1:-1:-1;;;;;228:4086:16;;;1559:21;;1555:48;;1617:25;;;;:::i;:::-;1613:53;;228:4086;;;1685:24;228:4086;;;;;;;;;;;1685:24;:::i;:::-;1724:29;;;;228:4086;;1613:53;228:4086;;-1:-1:-1;;;1651:15:16;;;1555:48;228:4086;;-1:-1:-1;;;1589:14:16;;;1284:52;-1:-1:-1;;228:4086:16;-1:-1:-1;;;1322:14:16;;;228:4086;;;;;;;;;;;;;;;:::i;:::-;;;:::i;:::-;1302:10;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;1346:1;;;;;:::i;228:4086::-;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;2613:10;;2625:19;;;;;;228:4086;;;2646:3;;;-1:-1:-1;;;;;228:4086:16;2669:11;;228:4086;2669:11;;;:::i;:::-;;:::i;:::-;228:4086;2669:25;;:59;;;2646:3;2665:182;;2646:3;;;:::i;:::-;2613:10;;2665:182;228:4086;;;;;;;;;;2748:28;228:4086;;;2764:11;;;;;;:::i;:::-;2748:28;;:::i;:::-;2820:11;;;;;;:::i;:::-;228:4086;2799:33;;;;;2665:182;;;2669:59;2716:11;2699:29;2716:11;;;;;;:::i;:::-;2699:29;;:::i;:::-;2698:30;2669:59;;1284:52;228:4086;;-1:-1:-1;;;1322:14:16;;;228:4086;;;;;;;;;;;;;;;;;-1:-1:-1;;228:4086:16;;;;;;:::i;:::-;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;228:4086;;3084:10;;;3080:37;;228:4086;;;;;;;;;;;;;;;;;;;3178:19;;;;;;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;3080:37;228:4086;;-1:-1:-1;;;3103:14:16;;;1284:52;-1:-1:-1;228:4086:16;-1:-1:-1;;;1322:14:16;;;228:4086;;;;;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;:::o;:::-;-1:-1:-1;;228:4086:16;;;;;;;:::o;:::-;;;;;;;;;;;;855:305;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;228:4086:16;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;;;;;;996:10;1030:3;228:4086;;1008:20;;;;;228:4086;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;1053:23;1049:73;;1030:3;;;:::i;:::-;996:10;;1049:73;1096:11;;;;;228:4086;1096:11;:::o;1008:20::-;;;;;855:305;:::o;228:4086::-;-1:-1:-1;;;228:4086:16;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;;;;855:305;;228:4086;971:3;;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;228:4086:16;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;;;;;;996:10;1030:3;228:4086;;1008:20;;;;;228:4086;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;1053:23;1049:73;;1030:3;;;:::i;:::-;996:10;;228:4086;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;228:4086:16;;-1:-1:-1;228:4086:16;;;-1:-1:-1;228:4086:16;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;1884:543;228:4086;;1997:3;;228:4086;;;;;;;;;;2031:10;;2065:3;228:4086;;2043:20;;;;;;2088:12;;;;:::i;:::-;228:4086;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;2088:23;;2084:284;;2065:3;;;;;;;:::i;:::-;2031:10;;2084:284;228:4086;;;;;;;;;;;;;;;;;;;;;2213:31;2198:12;2213:31;;2198:46;2213:31;;;:::i;:::-;228:4086;;;;;;;2198:12;;;:::i;:46::-;228:4086;;;;;;;2300:29;228:4086;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;2300:29;;2347:7::o;228:4086::-;-1:-1:-1;;;228:4086:16;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;2043:20;228:4086;;-1:-1:-1;;;2403:17:16;;;;;228:4086;;;;;;;;;;;;:::o;:::-;;-1:-1:-1;;;;;228:4086:16;;;;;;;:::o;3723:589::-;-1:-1:-1;;;;;228:4086:16;;;;;3814:20;;3810:47;;3872:20;;;:::i;:::-;3871:21;3867:51;;3932:20;;;:::i;:::-;3928:48;;3832:1;228:4086;;;;;;;3832:1;228:4086;3832:1;4083:3;228:4086;;4064:17;;;;;4106:9;;;;:::i;:::-;228:4086;;;;;;;;;;;4106:19;;4102:194;;4083:3;;;;:::i;:::-;4052:10;;4102:194;4145:9;;;;:18;:9;;;;;:::i;:18::-;4186:24;;;;;4233;;;;4275:7::o;4064:17::-;;;;;;;;3723:589::o;3928:48::-;228:4086;;-1:-1:-1;;;3961:15:16;;;;;3810:47;228:4086;;-1:-1:-1;;;3843:14:16;;;;","linkReferences":{}},"methodIdentifiers":{"clearLevel(uint64)":"2c72f031","getLevel(uint64)":"770609a8","getLevelCount(uint64)":"26d6362c","grantAccess(uint64,address)":"6ae8c1ab","grantAccessBatch(uint64,address[])":"38070443","hasAccess(uint64,address)":"6bf8e80f","revokeAccess(uint64,address)":"66e0211d","rotateLevel0Key(address,address)":"a5235519"},"rawMetadata":"{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AddressNotFound\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"AlreadyExists\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidLevel\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Unauthorized\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"AccessGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"AccessRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"LevelCleared\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"clearLevel\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"getLevel\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"getLevelCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantAccess\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"grantAccessBatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasAccess\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeAccess\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"oldKey\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"newKey\",\"type\":\"address\"}],\"name\":\"rotateLevel0Key\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"acl[0] = super admin level, can manage all other levels\",\"kind\":\"dev\",\"methods\":{\"clearLevel(uint64)\":{\"details\":\"Use with caution! Cannot clear level 0 to prevent lockout\"},\"grantAccess(uint64,address)\":{\"details\":\"Only level 0 can call this\"},\"revokeAccess(uint64,address)\":{\"details\":\"Only level 0 can call this\"},\"rotateLevel0Key(address,address)\":{\"details\":\"This is for key compromise scenarios\"}},\"title\":\"AccessController\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"clearLevel(uint64)\":{\"notice\":\"Clear all addresses from a specific level\"},\"getLevel(uint64)\":{\"notice\":\"Get all addresses at a specific level\"},\"getLevelCount(uint64)\":{\"notice\":\"Get number of addresses at a specific level\"},\"grantAccess(uint64,address)\":{\"notice\":\"Add address to a specific access level\"},\"grantAccessBatch(uint64,address[])\":{\"notice\":\"Batch grant access to multiple addresses\"},\"hasAccess(uint64,address)\":{\"notice\":\"Checks if an address has access at a specific level\"},\"revokeAccess(uint64,address)\":{\"notice\":\"Remove address from a specific access level\"},\"rotateLevel0Key(address,address)\":{\"notice\":\"Emergency key rotation - replace a level 0 address\"}},\"notice\":\"Hierarchical access control system with key rotation support\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/core/AccessController.sol\":\"AccessController\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@hedera/=lib/hedera-smart-contracts/contracts/system-contracts/\",\":@openzeppelin/=lib/openzeppelin-contracts/contracts/\",\":ds-test/=lib/hedera-smart-contracts/lib/forge-std/lib/ds-test/src/\",\":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=lib/forge-std/src/\",\":halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":hardhat/=lib/hedera-smart-contracts/node_modules/hardhat/\",\":hedera-smart-contracts/=lib/hedera-smart-contracts/contracts/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\"],\"viaIR\":true},\"sources\":{\"src/core/AccessController.sol\":{\"keccak256\":\"0x5a2e6530fe000d831186ebebae0156f7d4bfc5fdb8d130e4d4beca8d67e5a066\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://55c2b55b60f2303a653a9916f7804288ea9cca8fb04521db91eb9cc54969b149\",\"dweb:/ipfs/QmbErkG2FYhgLtyqLjLbMghXVyuxr3FPHBYHkqFgSVPZJu\"]}},\"version\":1}","metadata":{"compiler":{"version":"0.8.20+commit.a1b79de6"},"language":"Solidity","output":{"abi":[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"type":"error","name":"AddressNotFound"},{"inputs":[],"type":"error","name":"AlreadyExists"},{"inputs":[],"type":"error","name":"InvalidLevel"},{"inputs":[],"type":"error","name":"Unauthorized"},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64","indexed":true},{"internalType":"address","name":"account","type":"address","indexed":true}],"type":"event","name":"AccessGranted","anonymous":false},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64","indexed":true},{"internalType":"address","name":"account","type":"address","indexed":true}],"type":"event","name":"AccessRevoked","anonymous":false},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64","indexed":true}],"type":"event","name":"LevelCleared","anonymous":false},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"}],"stateMutability":"nonpayable","type":"function","name":"clearLevel"},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"}],"stateMutability":"view","type":"function","name":"getLevel","outputs":[{"internalType":"address[]","name":"","type":"address[]"}]},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"}],"stateMutability":"view","type":"function","name":"getLevelCount","outputs":[{"internalType":"uint256","name":"","type":"uint256"}]},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"},{"internalType":"address","name":"account","type":"address"}],"stateMutability":"nonpayable","type":"function","name":"grantAccess"},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"},{"internalType":"address[]","name":"accounts","type":"address[]"}],"stateMutability":"nonpayable","type":"function","name":"grantAccessBatch"},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"},{"internalType":"address","name":"account","type":"address"}],"stateMutability":"view","type":"function","name":"hasAccess","outputs":[{"internalType":"bool","name":"","type":"bool"}]},{"inputs":[{"internalType":"uint64","name":"level","type":"uint64"},{"internalType":"address","name":"account","type":"address"}],"stateMutability":"nonpayable","type":"function","name":"revokeAccess"},{"inputs":[{"internalType":"address","name":"oldKey","type":"address"},{"internalType":"address","name":"newKey","type":"address"}],"stateMutability":"nonpayable","type":"function","name":"rotateLevel0Key"}],"devdoc":{"kind":"dev","methods":{"clearLevel(uint64)":{"details":"Use with caution! Cannot clear level 0 to prevent lockout"},"grantAccess(uint64,address)":{"details":"Only level 0 can call this"},"revokeAccess(uint64,address)":{"details":"Only level 0 can call this"},"rotateLevel0Key(address,address)":{"details":"This is for key compromise scenarios"}},"version":1},"userdoc":{"kind":"user","methods":{"clearLevel(uint64)":{"notice":"Clear all addresses from a specific level"},"getLevel(uint64)":{"notice":"Get all addresses at a specific level"},"getLevelCount(uint64)":{"notice":"Get number of addresses at a specific level"},"grantAccess(uint64,address)":{"notice":"Add address to a specific access level"},"grantAccessBatch(uint64,address[])":{"notice":"Batch grant access to multiple addresses"},"hasAccess(uint64,address)":{"notice":"Checks if an address has access at a specific level"},"revokeAccess(uint64,address)":{"notice":"Remove address from a specific access level"},"rotateLevel0Key(address,address)":{"notice":"Emergency key rotation - replace a level 0 address"}},"version":1}},"settings":{"remappings":["@hedera/=lib/hedera-smart-contracts/contracts/system-contracts/","@openzeppelin/=lib/openzeppelin-contracts/contracts/","ds-test/=lib/hedera-smart-contracts/lib/forge-std/lib/ds-test/src/","erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/","forge-std/=lib/forge-std/src/","halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/","hardhat/=lib/hedera-smart-contracts/node_modules/hardhat/","hedera-smart-contracts/=lib/hedera-smart-contracts/contracts/","openzeppelin-contracts/=lib/openzeppelin-contracts/"],"optimizer":{"enabled":true,"runs":200},"metadata":{"bytecodeHash":"ipfs"},"compilationTarget":{"src/core/AccessController.sol":"AccessController"},"evmVersion":"shanghai","libraries":{},"viaIR":true},"sources":{"src/core/AccessController.sol":{"keccak256":"0x5a2e6530fe000d831186ebebae0156f7d4bfc5fdb8d130e4d4beca8d67e5a066","urls":["bzz-raw://55c2b55b60f2303a653a9916f7804288ea9cca8fb04521db91eb9cc54969b149","dweb:/ipfs/QmbErkG2FYhgLtyqLjLbMghXVyuxr3FPHBYHkqFgSVPZJu"],"license":"MIT"}},"version":1},"id":16}
+{
+    "abi": [
+        {
+            "type": "constructor",
+            "inputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "clearLevel",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                }
+            ],
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "getLevel",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "getLevelCount",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "uint256",
+                    "internalType": "uint256"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "grantAccess",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "grantAccessBatch",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                },
+                {
+                    "name": "accounts",
+                    "type": "address[]",
+                    "internalType": "address[]"
+                }
+            ],
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "hasAccess",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "bool",
+                    "internalType": "bool"
+                }
+            ],
+            "stateMutability": "view"
+        },
+        {
+            "type": "function",
+            "name": "revokeAccess",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "internalType": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "function",
+            "name": "rotateLevel0Key",
+            "inputs": [
+                {
+                    "name": "oldKey",
+                    "type": "address",
+                    "internalType": "address"
+                },
+                {
+                    "name": "newKey",
+                    "type": "address",
+                    "internalType": "address"
+                }
+            ],
+            "outputs": [],
+            "stateMutability": "nonpayable"
+        },
+        {
+            "type": "event",
+            "name": "AccessGranted",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "indexed": true,
+                    "internalType": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                }
+            ],
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "AccessRevoked",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "indexed": true,
+                    "internalType": "uint64"
+                },
+                {
+                    "name": "account",
+                    "type": "address",
+                    "indexed": true,
+                    "internalType": "address"
+                }
+            ],
+            "anonymous": false
+        },
+        {
+            "type": "event",
+            "name": "LevelCleared",
+            "inputs": [
+                {
+                    "name": "level",
+                    "type": "uint64",
+                    "indexed": true,
+                    "internalType": "uint64"
+                }
+            ],
+            "anonymous": false
+        },
+        {
+            "type": "error",
+            "name": "AddressNotFound",
+            "inputs": []
+        },
+        {
+            "type": "error",
+            "name": "AlreadyExists",
+            "inputs": []
+        },
+        {
+            "type": "error",
+            "name": "InvalidLevel",
+            "inputs": []
+        },
+        {
+            "type": "error",
+            "name": "Unauthorized",
+            "inputs": []
+        }
+    ],
+    "bytecode": {
+        "object": "0x608080604052346100a2575f80805260208190527fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5805491906801000000000000000083101561008e576001830180825583101561007a578152602090200180546001600160a01b03191633179055610a2790816100a78239f35b634e487b7160e01b82526032600452602482fd5b634e487b7160e01b82526041600452602482fd5b5f80fdfe608060409080825260049182361015610016575f80fd5b5f91823560e01c90816326d6362c146104e3575080632c72f0311461043057806338070443146102f057806366e0211d146102b55780636ae8c1ab146101f45780636bf8e80f146101be578063770609a8146100d75763a52355191461007a575f80fd5b346100d357806003193601126100d35782356001600160a01b03811681036100cf576100a4610532565b916100ae3361056a565b156100c15750906100be916108d8565b80f35b516282b42960e81b81528490fd5b8280fd5b5080fd5b5082346100cf576020806003193601126101ba5767ffffffffffffffff93846100fe610517565b16815280825283812093805193848487549182815201908197855285852090855b8782821061019d5750505050859003601f01601f191685019687118588101761018a575085815282865292518583018190528594938501939290915b82811061016a57505050500390f35b83516001600160a01b03168552869550938101939281019260010161015b565b634e487b7160e01b835260419052602482fd5b83546001600160a01b03168552909301926001928301920161011f565b8380fd5b50346100d357806003193601126100d3576020906101eb6101dd610517565b6101e5610532565b9061066c565b90519015158152f35b508290346100cf57806003193601126100cf5761020f610517565b610217610532565b906102213361056a565b156102a7576001600160a01b03821693841561029957610241838361066c565b61028b57509067ffffffffffffffff61026492169283865285602052852061073e565b7fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8380a380f35b835163119b4fd360e11b8152fd5b835163d1459f7960e01b8152fd5b5050516282b42960e81b8152fd5b50346100d357806003193601126100d3576102ce610517565b6102d6610532565b916102e03361056a565b156100c15750906100be9161079b565b50346100d357806003193601126100d357610309610517565b9060243567ffffffffffffffff9485821161042c573660238301121561042c578181013590868211610428576024830192602436918460051b010111610428576103523361056a565b1561041b5750845b818110610365578580f35b610399906001600160a01b03806103856103808487896108b4565b6108c4565b161515806103fd575b61039e575b50610548565b61035a565b88871690818952886020526103c3878a206103bd61038086898b6108b4565b9061073e565b6103d16103808487896108b4565b16907fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8980a35f610393565b5061041561040f6103808487896108b4565b8861066c565b1561038e565b83516282b42960e81b8152fd5b8580fd5b8480fd5b508290346100cf5760203660031901126100cf5761044c610517565b6104553361056a565b156104d65767ffffffffffffffff169182156104c85750818352826020528220805490838155816104aa575b50507f287b3f897e14ba6ec2824c07650e78576fbc701e6910b6225317f5ae0cc6517d8280a280f35b835260208320908101905b81811015610481578381556001016104b5565b905163d1459f7960e01b8152fd5b50516282b42960e81b8152fd5b919050346100cf5760203660031901126100cf5760209267ffffffffffffffff61050b610517565b16815280845220548152f35b6004359067ffffffffffffffff8216820361052e57565b5f80fd5b602435906001600160a01b038216820361052e57565b5f1981146105565760010190565b634e487b7160e01b5f52601160045260245ffd5b5f60208181526040517fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb58054808352908452929392818301907ff0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f590865b8582821061064f5750505050819003601f01601f1916810167ffffffffffffffff81118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a5761062590610548565b6105f7565b5050505050600190565b5050505090565b634e487b7160e01b85526041600452602485fd5b83546001600160a01b0316855290930192600192830192016105c7565b9067ffffffffffffffff805f9316835260209083825260408420906040519182848254918281520191875284872090875b868282106106f85750505050829003601f01601f191682019081118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a576106f390610548565b6106c5565b83546001600160a01b03168552909301926001928301920161069d565b805482101561072a575f5260205f2001905f90565b634e487b7160e01b5f52603260045260245ffd5b9081549168010000000000000000831015610787578261076691600161078595018155610715565b90919082549060031b9160018060a01b03809116831b921b1916179055565b565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff16915f91838352826020526040832093835b8554808210156108a2576107ca8288610715565b90546001600160a01b038681169260039290831b1c811683146107f957505050506107f490610548565b6107b6565b919697949550925f989298199889810190811161088e5790610766836108226108309487610715565b905490881b1c169185610715565b815497881561087a577f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e3595969798019261086a8484610715565b81939154921b1b191690555580a3565b634e487b7160e01b85526031600452602485fd5b634e487b7160e01b86526011600452602486fd5b604051636054b46960e01b8152600490fd5b919081101561072a5760051b0190565b356001600160a01b038116810361052e5790565b6001600160a01b03918083169182156109df576108f48161056a565b156108a2576109028261056a565b6109cd575f8080526020819052917fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5835b81548110156109c4576109468183610715565b90548589169160031b1c88168114610967575061096290610548565b610933565b94959650610979935061076691610715565b817f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e358180a37fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8180a3565b50505050505050565b60405163119b4fd360e11b8152600490fd5b60405163d1459f7960e01b8152600490fdfea2646970667358221220ea68fb95aad79ef2536946635fa1550aa8195b28016dfc324c169e502c70e85c64736f6c63430008140033",
+        "sourceMap": "228:4086:16:-:0;;;;;;;688:3;228:4086;;;;;;;;;;;688:3;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;;228:4086:16;700:10;228:4086;;;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;;;;",
+        "linkReferences": {}
+    },
+    "deployedBytecode": {
+        "object": "0x608060409080825260049182361015610016575f80fd5b5f91823560e01c90816326d6362c146104e3575080632c72f0311461043057806338070443146102f057806366e0211d146102b55780636ae8c1ab146101f45780636bf8e80f146101be578063770609a8146100d75763a52355191461007a575f80fd5b346100d357806003193601126100d35782356001600160a01b03811681036100cf576100a4610532565b916100ae3361056a565b156100c15750906100be916108d8565b80f35b516282b42960e81b81528490fd5b8280fd5b5080fd5b5082346100cf576020806003193601126101ba5767ffffffffffffffff93846100fe610517565b16815280825283812093805193848487549182815201908197855285852090855b8782821061019d5750505050859003601f01601f191685019687118588101761018a575085815282865292518583018190528594938501939290915b82811061016a57505050500390f35b83516001600160a01b03168552869550938101939281019260010161015b565b634e487b7160e01b835260419052602482fd5b83546001600160a01b03168552909301926001928301920161011f565b8380fd5b50346100d357806003193601126100d3576020906101eb6101dd610517565b6101e5610532565b9061066c565b90519015158152f35b508290346100cf57806003193601126100cf5761020f610517565b610217610532565b906102213361056a565b156102a7576001600160a01b03821693841561029957610241838361066c565b61028b57509067ffffffffffffffff61026492169283865285602052852061073e565b7fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8380a380f35b835163119b4fd360e11b8152fd5b835163d1459f7960e01b8152fd5b5050516282b42960e81b8152fd5b50346100d357806003193601126100d3576102ce610517565b6102d6610532565b916102e03361056a565b156100c15750906100be9161079b565b50346100d357806003193601126100d357610309610517565b9060243567ffffffffffffffff9485821161042c573660238301121561042c578181013590868211610428576024830192602436918460051b010111610428576103523361056a565b1561041b5750845b818110610365578580f35b610399906001600160a01b03806103856103808487896108b4565b6108c4565b161515806103fd575b61039e575b50610548565b61035a565b88871690818952886020526103c3878a206103bd61038086898b6108b4565b9061073e565b6103d16103808487896108b4565b16907fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8980a35f610393565b5061041561040f6103808487896108b4565b8861066c565b1561038e565b83516282b42960e81b8152fd5b8580fd5b8480fd5b508290346100cf5760203660031901126100cf5761044c610517565b6104553361056a565b156104d65767ffffffffffffffff169182156104c85750818352826020528220805490838155816104aa575b50507f287b3f897e14ba6ec2824c07650e78576fbc701e6910b6225317f5ae0cc6517d8280a280f35b835260208320908101905b81811015610481578381556001016104b5565b905163d1459f7960e01b8152fd5b50516282b42960e81b8152fd5b919050346100cf5760203660031901126100cf5760209267ffffffffffffffff61050b610517565b16815280845220548152f35b6004359067ffffffffffffffff8216820361052e57565b5f80fd5b602435906001600160a01b038216820361052e57565b5f1981146105565760010190565b634e487b7160e01b5f52601160045260245ffd5b5f60208181526040517fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb58054808352908452929392818301907ff0df3dcda05b4fbd9c655cde3d5ceb211e019e72ec816e127a59e7195f2cd7f590865b8582821061064f5750505050819003601f01601f1916810167ffffffffffffffff81118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a5761062590610548565b6105f7565b5050505050600190565b5050505090565b634e487b7160e01b85526041600452602485fd5b83546001600160a01b0316855290930192600192830192016105c7565b9067ffffffffffffffff805f9316835260209083825260408420906040519182848254918281520191875284872090875b868282106106f85750505050829003601f01601f191682019081118282101761063b57604052835b815181101561063457600581901b82018301516001600160a01b0385811691161461062a576106f390610548565b6106c5565b83546001600160a01b03168552909301926001928301920161069d565b805482101561072a575f5260205f2001905f90565b634e487b7160e01b5f52603260045260245ffd5b9081549168010000000000000000831015610787578261076691600161078595018155610715565b90919082549060031b9160018060a01b03809116831b921b1916179055565b565b634e487b7160e01b5f52604160045260245ffd5b67ffffffffffffffff16915f91838352826020526040832093835b8554808210156108a2576107ca8288610715565b90546001600160a01b038681169260039290831b1c811683146107f957505050506107f490610548565b6107b6565b919697949550925f989298199889810190811161088e5790610766836108226108309487610715565b905490881b1c169185610715565b815497881561087a577f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e3595969798019261086a8484610715565b81939154921b1b191690555580a3565b634e487b7160e01b85526031600452602485fd5b634e487b7160e01b86526011600452602486fd5b604051636054b46960e01b8152600490fd5b919081101561072a5760051b0190565b356001600160a01b038116810361052e5790565b6001600160a01b03918083169182156109df576108f48161056a565b156108a2576109028261056a565b6109cd575f8080526020819052917fad3228b676f7d3cd4284a5443f17f1962b36e491b30a40b2405849e597ba5fb5835b81548110156109c4576109468183610715565b90548589169160031b1c88168114610967575061096290610548565b610933565b94959650610979935061076691610715565b817f193858fa6df30b1b3e370873493c20ee1f17dcb6ef2533f09f20981837562e358180a37fc4c064f50bef42b0759547a854fd757888956167f2bae95ec98c69f6aaee90fb8180a3565b50505050505050565b60405163119b4fd360e11b8152600490fd5b60405163d1459f7960e01b8152600490fdfea2646970667358221220ea68fb95aad79ef2536946635fa1550aa8195b28016dfc324c169e502c70e85c64736f6c63430008140033",
+        "sourceMap": "228:4086:16:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;:::i;:::-;1302:10;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;1346:1;;;;;:::i;:::-;228:4086;;1284:52;228:4086;-1:-1:-1;;;1322:14:16;;228:4086;;1322:14;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;228:4086:16;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;;;;-1:-1:-1;228:4086:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;-1:-1:-1;228:4086:16;;;;;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;:::i;:::-;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;:::i;:::-;1302:10;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;-1:-1:-1;;;;;228:4086:16;;;1559:21;;1555:48;;1617:25;;;;:::i;:::-;1613:53;;228:4086;;;1685:24;228:4086;;;;;;;;;;;1685:24;:::i;:::-;1724:29;;;;228:4086;;1613:53;228:4086;;-1:-1:-1;;;1651:15:16;;;1555:48;228:4086;;-1:-1:-1;;;1589:14:16;;;1284:52;-1:-1:-1;;228:4086:16;-1:-1:-1;;;1322:14:16;;;228:4086;;;;;;;;;;;;;;;:::i;:::-;;;:::i;:::-;1302:10;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;1346:1;;;;;:::i;228:4086::-;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;2613:10;;2625:19;;;;;;228:4086;;;2646:3;;;-1:-1:-1;;;;;228:4086:16;2669:11;;228:4086;2669:11;;;:::i;:::-;;:::i;:::-;228:4086;2669:25;;:59;;;2646:3;2665:182;;2646:3;;;:::i;:::-;2613:10;;2665:182;228:4086;;;;;;;;;;2748:28;228:4086;;;2764:11;;;;;;:::i;:::-;2748:28;;:::i;:::-;2820:11;;;;;;:::i;:::-;228:4086;2799:33;;;;;2665:182;;;2669:59;2716:11;2699:29;2716:11;;;;;;:::i;:::-;2699:29;;:::i;:::-;2698:30;2669:59;;1284:52;228:4086;;-1:-1:-1;;;1322:14:16;;;228:4086;;;;;;;;;;;;;;;;;-1:-1:-1;;228:4086:16;;;;;;:::i;:::-;1289:24;1302:10;1289:24;:::i;:::-;1288:25;1284:52;;228:4086;;3084:10;;;3080:37;;228:4086;;;;;;;;;;;;;;;;;;;3178:19;;;;;;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;3080:37;228:4086;;-1:-1:-1;;;3103:14:16;;;1284:52;-1:-1:-1;228:4086:16;-1:-1:-1;;;1322:14:16;;;228:4086;;;;;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;:::o;:::-;-1:-1:-1;;228:4086:16;;;;;;;:::o;:::-;;;;;;;;;;;;855:305;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;228:4086:16;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;;;;;;996:10;1030:3;228:4086;;1008:20;;;;;228:4086;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;1053:23;1049:73;;1030:3;;;:::i;:::-;996:10;;1049:73;1096:11;;;;;228:4086;1096:11;:::o;1008:20::-;;;;;855:305;:::o;228:4086::-;-1:-1:-1;;;228:4086:16;;;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;;;;855:305;;228:4086;971:3;;228:4086;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;;;;228:4086:16;;;;;-1:-1:-1;;228:4086:16;;;;;;;;;;;;;;996:10;1030:3;228:4086;;1008:20;;;;;228:4086;;;;;;;;;-1:-1:-1;;;;;228:4086:16;;;;;1053:23;1049:73;;1030:3;;;:::i;:::-;996:10;;228:4086;;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;;;;;;;;;;;;-1:-1:-1;228:4086:16;;-1:-1:-1;228:4086:16;;;-1:-1:-1;228:4086:16;:::o;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::o;:::-;;;;;;;;;;;;1884:543;228:4086;;1997:3;;228:4086;;;;;;;;;;2031:10;;2065:3;228:4086;;2043:20;;;;;;2088:12;;;;:::i;:::-;228:4086;;-1:-1:-1;;;;;228:4086:16;;;;;;;;;;;;2088:23;;2084:284;;2065:3;;;;;;;:::i;:::-;2031:10;;2084:284;228:4086;;;;;;;;;;;;;;;;;;;;;2213:31;2198:12;2213:31;;2198:46;2213:31;;;:::i;:::-;228:4086;;;;;;;2198:12;;;:::i;:46::-;228:4086;;;;;;;2300:29;228:4086;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;2300:29;;2347:7::o;228:4086::-;-1:-1:-1;;;228:4086:16;;;;;;;;;-1:-1:-1;;;228:4086:16;;;;;;;;2043:20;228:4086;;-1:-1:-1;;;2403:17:16;;;;;228:4086;;;;;;;;;;;;:::o;:::-;;-1:-1:-1;;;;;228:4086:16;;;;;;;:::o;3723:589::-;-1:-1:-1;;;;;228:4086:16;;;;;3814:20;;3810:47;;3872:20;;;:::i;:::-;3871:21;3867:51;;3932:20;;;:::i;:::-;3928:48;;3832:1;228:4086;;;;;;;3832:1;228:4086;3832:1;4083:3;228:4086;;4064:17;;;;;4106:9;;;;:::i;:::-;228:4086;;;;;;;;;;;4106:19;;4102:194;;4083:3;;;;:::i;:::-;4052:10;;4102:194;4145:9;;;;:18;:9;;;;;:::i;:18::-;4186:24;;;;;4233;;;;4275:7::o;4064:17::-;;;;;;;;3723:589::o;3928:48::-;228:4086;;-1:-1:-1;;;3961:15:16;;;;;3810:47;228:4086;;-1:-1:-1;;;3843:14:16;;;;",
+        "linkReferences": {}
+    },
+    "methodIdentifiers": {
+        "clearLevel(uint64)": "2c72f031",
+        "getLevel(uint64)": "770609a8",
+        "getLevelCount(uint64)": "26d6362c",
+        "grantAccess(uint64,address)": "6ae8c1ab",
+        "grantAccessBatch(uint64,address[])": "38070443",
+        "hasAccess(uint64,address)": "6bf8e80f",
+        "revokeAccess(uint64,address)": "66e0211d",
+        "rotateLevel0Key(address,address)": "a5235519"
+    },
+    "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"inputs\":[],\"name\":\"AddressNotFound\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"AlreadyExists\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"InvalidLevel\",\"type\":\"error\"},{\"inputs\":[],\"name\":\"Unauthorized\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"AccessGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"AccessRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"LevelCleared\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"clearLevel\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"getLevel\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"}],\"name\":\"getLevelCount\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantAccess\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address[]\",\"name\":\"accounts\",\"type\":\"address[]\"}],\"name\":\"grantAccessBatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasAccess\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"level\",\"type\":\"uint64\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeAccess\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"oldKey\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"newKey\",\"type\":\"address\"}],\"name\":\"rotateLevel0Key\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"acl[0] = super admin level, can manage all other levels\",\"kind\":\"dev\",\"methods\":{\"clearLevel(uint64)\":{\"details\":\"Use with caution! Cannot clear level 0 to prevent lockout\"},\"grantAccess(uint64,address)\":{\"details\":\"Only level 0 can call this\"},\"revokeAccess(uint64,address)\":{\"details\":\"Only level 0 can call this\"},\"rotateLevel0Key(address,address)\":{\"details\":\"This is for key compromise scenarios\"}},\"title\":\"AccessController\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"clearLevel(uint64)\":{\"notice\":\"Clear all addresses from a specific level\"},\"getLevel(uint64)\":{\"notice\":\"Get all addresses at a specific level\"},\"getLevelCount(uint64)\":{\"notice\":\"Get number of addresses at a specific level\"},\"grantAccess(uint64,address)\":{\"notice\":\"Add address to a specific access level\"},\"grantAccessBatch(uint64,address[])\":{\"notice\":\"Batch grant access to multiple addresses\"},\"hasAccess(uint64,address)\":{\"notice\":\"Checks if an address has access at a specific level\"},\"revokeAccess(uint64,address)\":{\"notice\":\"Remove address from a specific access level\"},\"rotateLevel0Key(address,address)\":{\"notice\":\"Emergency key rotation - replace a level 0 address\"}},\"notice\":\"Hierarchical access control system with key rotation support\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/core/AccessController.sol\":\"AccessController\"},\"evmVersion\":\"shanghai\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@hedera/=lib/hedera-smart-contracts/contracts/system-contracts/\",\":@openzeppelin/=lib/openzeppelin-contracts/contracts/\",\":ds-test/=lib/hedera-smart-contracts/lib/forge-std/lib/ds-test/src/\",\":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/\",\":forge-std/=lib/forge-std/src/\",\":halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/\",\":hardhat/=lib/hedera-smart-contracts/node_modules/hardhat/\",\":hedera-smart-contracts/=lib/hedera-smart-contracts/contracts/\",\":openzeppelin-contracts/=lib/openzeppelin-contracts/\"],\"viaIR\":true},\"sources\":{\"src/core/AccessController.sol\":{\"keccak256\":\"0x5a2e6530fe000d831186ebebae0156f7d4bfc5fdb8d130e4d4beca8d67e5a066\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://55c2b55b60f2303a653a9916f7804288ea9cca8fb04521db91eb9cc54969b149\",\"dweb:/ipfs/QmbErkG2FYhgLtyqLjLbMghXVyuxr3FPHBYHkqFgSVPZJu\"]}},\"version\":1}",
+    "metadata": {
+        "compiler": {
+            "version": "0.8.20+commit.a1b79de6"
+        },
+        "language": "Solidity",
+        "output": {
+            "abi": [
+                {
+                    "inputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "constructor"
+                },
+                {
+                    "inputs": [],
+                    "type": "error",
+                    "name": "AddressNotFound"
+                },
+                {
+                    "inputs": [],
+                    "type": "error",
+                    "name": "AlreadyExists"
+                },
+                {
+                    "inputs": [],
+                    "type": "error",
+                    "name": "InvalidLevel"
+                },
+                {
+                    "inputs": [],
+                    "type": "error",
+                    "name": "Unauthorized"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64",
+                            "indexed": true
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "account",
+                            "type": "address",
+                            "indexed": true
+                        }
+                    ],
+                    "type": "event",
+                    "name": "AccessGranted",
+                    "anonymous": false
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64",
+                            "indexed": true
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "account",
+                            "type": "address",
+                            "indexed": true
+                        }
+                    ],
+                    "type": "event",
+                    "name": "AccessRevoked",
+                    "anonymous": false
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64",
+                            "indexed": true
+                        }
+                    ],
+                    "type": "event",
+                    "name": "LevelCleared",
+                    "anonymous": false
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "clearLevel"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "getLevel",
+                    "outputs": [
+                        {
+                            "internalType": "address[]",
+                            "name": "",
+                            "type": "address[]"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "getLevelCount",
+                    "outputs": [
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "account",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "grantAccess"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        },
+                        {
+                            "internalType": "address[]",
+                            "name": "accounts",
+                            "type": "address[]"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "grantAccessBatch"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "account",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "view",
+                    "type": "function",
+                    "name": "hasAccess",
+                    "outputs": [
+                        {
+                            "internalType": "bool",
+                            "name": "",
+                            "type": "bool"
+                        }
+                    ]
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "uint64",
+                            "name": "level",
+                            "type": "uint64"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "account",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "revokeAccess"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "oldKey",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "newKey",
+                            "type": "address"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function",
+                    "name": "rotateLevel0Key"
+                }
+            ],
+            "devdoc": {
+                "kind": "dev",
+                "methods": {
+                    "clearLevel(uint64)": {
+                        "details": "Use with caution! Cannot clear level 0 to prevent lockout"
+                    },
+                    "grantAccess(uint64,address)": {
+                        "details": "Only level 0 can call this"
+                    },
+                    "revokeAccess(uint64,address)": {
+                        "details": "Only level 0 can call this"
+                    },
+                    "rotateLevel0Key(address,address)": {
+                        "details": "This is for key compromise scenarios"
+                    }
+                },
+                "version": 1
+            },
+            "userdoc": {
+                "kind": "user",
+                "methods": {
+                    "clearLevel(uint64)": {
+                        "notice": "Clear all addresses from a specific level"
+                    },
+                    "getLevel(uint64)": {
+                        "notice": "Get all addresses at a specific level"
+                    },
+                    "getLevelCount(uint64)": {
+                        "notice": "Get number of addresses at a specific level"
+                    },
+                    "grantAccess(uint64,address)": {
+                        "notice": "Add address to a specific access level"
+                    },
+                    "grantAccessBatch(uint64,address[])": {
+                        "notice": "Batch grant access to multiple addresses"
+                    },
+                    "hasAccess(uint64,address)": {
+                        "notice": "Checks if an address has access at a specific level"
+                    },
+                    "revokeAccess(uint64,address)": {
+                        "notice": "Remove address from a specific access level"
+                    },
+                    "rotateLevel0Key(address,address)": {
+                        "notice": "Emergency key rotation - replace a level 0 address"
+                    }
+                },
+                "version": 1
+            }
+        },
+        "settings": {
+            "remappings": [
+                "@hedera/=lib/hedera-smart-contracts/contracts/system-contracts/",
+                "@openzeppelin/=lib/openzeppelin-contracts/contracts/",
+                "ds-test/=lib/hedera-smart-contracts/lib/forge-std/lib/ds-test/src/",
+                "erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
+                "forge-std/=lib/forge-std/src/",
+                "halmos-cheatcodes/=lib/openzeppelin-contracts/lib/halmos-cheatcodes/src/",
+                "hardhat/=lib/hedera-smart-contracts/node_modules/hardhat/",
+                "hedera-smart-contracts/=lib/hedera-smart-contracts/contracts/",
+                "openzeppelin-contracts/=lib/openzeppelin-contracts/"
+            ],
+            "optimizer": {
+                "enabled": true,
+                "runs": 200
+            },
+            "metadata": {
+                "bytecodeHash": "ipfs"
+            },
+            "compilationTarget": {
+                "src/core/AccessController.sol": "AccessController"
+            },
+            "evmVersion": "shanghai",
+            "libraries": {},
+            "viaIR": true
+        },
+        "sources": {
+            "src/core/AccessController.sol": {
+                "keccak256": "0x5a2e6530fe000d831186ebebae0156f7d4bfc5fdb8d130e4d4beca8d67e5a066",
+                "urls": [
+                    "bzz-raw://55c2b55b60f2303a653a9916f7804288ea9cca8fb04521db91eb9cc54969b149",
+                    "dweb:/ipfs/QmbErkG2FYhgLtyqLjLbMghXVyuxr3FPHBYHkqFgSVPZJu"
+                ],
+                "license": "MIT"
+            }
+        },
+        "version": 1
+    },
+    "id": 16
+}
