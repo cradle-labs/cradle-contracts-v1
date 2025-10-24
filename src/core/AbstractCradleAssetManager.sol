@@ -84,6 +84,14 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, A
         }
     }
 
+    function selfAssociate() public {
+        int256 res = HederaTokenService.associateToken(msg.sender, token);
+
+        if(res != HederaResponseCodes.SUCCESS) {
+            revert("Association failue");
+        }
+    }
+
     /**
      * handles mint and token transfer in a single transaction
      */
