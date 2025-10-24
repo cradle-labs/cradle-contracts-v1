@@ -93,30 +93,44 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, A
     /**
      * handles mint and token transfer in a single transaction
      */
-    function airdropTokens(address target, uint64 amount) public onlyAuthorized {
+    // function airdropTokens(address target, uint64 amount) public onlyAuthorized {
 
-        IHederaTokenService.AccountAmount memory recipientAccount;
-        recipientAccount.accountID = target;
-        recipientAccount.amount = int64(amount);
+    //     IHederaTokenService.AccountAmount memory recipientAccount;
+    //     recipientAccount.accountID = target;
+    //     recipientAccount.amount = int64(amount);
 
-        IHederaTokenService.AccountAmount memory senderAccount;
-        senderAccount.accountID = address(this);
-        senderAccount.amount = -int64(amount);
+    //     IHederaTokenService.AccountAmount memory senderAccount;
+    //     senderAccount.accountID = address(this);
+    //     senderAccount.amount = -int64(amount);
 
-        IHederaTokenService.TokenTransferList memory transferList;
+    //     IHederaTokenService.TokenTransferList memory transferList;
 
-        transferList.token = token;
-        transferList.transfers = new IHederaTokenService.AccountAmount[](2);
-        transferList.transfers[0] = senderAccount;
-        transferList.transfers[1] = recipientAccount;
+    //     transferList.token = token;
+    //     transferList.transfers = new IHederaTokenService.AccountAmount[](2);
+    //     transferList.transfers[0] = senderAccount;
+    //     transferList.transfers[1] = recipientAccount;
 
-        IHederaTokenService.TokenTransferList[] memory airdropList = new IHederaTokenService.TokenTransferList[](1);
-        airdropList[0] = transferList;
+    //     IHederaTokenService.TokenTransferList[] memory airdropList = new IHederaTokenService.TokenTransferList[](1);
+    //     airdropList[0] = transferList;
 
-        int256 responseCode = hts.airdropTokens(airdropList);
+    //     int256 responseCode = hts.airdropTokens(airdropList);
 
+    //     if (responseCode != HederaResponseCodes.SUCCESS) {
+    //         revert("Failed to airdrop tokens");
+    //     }
+    // }
+
+
+    function transferTokens(address target, uint64 amount) public onlyAuthorized {
+        int256 responseCode = HederaTokenService.transferToken(token, address(this), target, int64(amount));
+        
         if (responseCode != HederaResponseCodes.SUCCESS) {
-            revert("Failed to airdrop tokens");
+            revert("Failed to transfer tokens");
         }
+    }
+
+    function airdropTokens(address target, uint64 amount) public onlyAuthorized {
+        mint(amount);
+        transferTokens( target, amount);
     }
 }
