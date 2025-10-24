@@ -31,7 +31,8 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
 
     function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) internal virtual returns (AbstractCradleAssetManager);
 
-    function createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) public payable onlyAuthorized returns (address) {
+    function createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) external payable onlyAuthorized returns (address) {
+        // TODO: metadata missing needs to be added
         AbstractCradleAssetManager asset = _createAsset(_name, _symbol, aclContract, allowList);
         bridgedAssets[_symbol] = asset;
         return address(asset);

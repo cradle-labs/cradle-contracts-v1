@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 import { AbstractAssetsIssuer } from "./AbstractAssetIssuer.sol";
-import { BridgedAsset } from "./BridgedAsset.sol";
+import { NativeAsset } from "./NativeAsset.sol";
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 
 contract NativeAssetIssuer is AbstractAssetsIssuer {
@@ -11,7 +11,7 @@ contract NativeAssetIssuer is AbstractAssetsIssuer {
     }
 
     function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) override internal returns (AbstractCradleAssetManager) {
-        BridgedAsset asset = new BridgedAsset(_name, _symbol, aclContract, allowList);
+        NativeAsset asset = new NativeAsset{value:msg.value}(_name, _symbol, aclContract, allowList);
         return asset;
     }
 }
