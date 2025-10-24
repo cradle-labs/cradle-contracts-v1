@@ -16,7 +16,6 @@ import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
  */
 abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, AbstractContractAuthority {
     address public token;
-    IHederaTokenService constant hts = IHederaTokenService(address(0x167));
 
     constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList) payable AbstractContractAuthority(aclContract, allowList) {
         IHederaTokenService.HederaToken memory tokenDetails;
