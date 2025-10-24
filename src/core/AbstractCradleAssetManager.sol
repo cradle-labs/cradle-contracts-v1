@@ -6,7 +6,6 @@ import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
 import {KeyHelper} from "@hedera/hedera-token-service/KeyHelper.sol";
 import {IHRC719} from "@hedera/hedera-token-service/IHRC719.sol";
-import {Strings} from "@openzeppelin/utils/Strings.sol";
 import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 /**
  * AbstractCradleAssetManager
