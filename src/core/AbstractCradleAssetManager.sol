@@ -5,6 +5,7 @@ import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenServic
 import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
 import {KeyHelper} from "@hedera/hedera-token-service/KeyHelper.sol";
+import {ExpiryHelper} from "@hedera/hedera-token-service/ExpiryHelper.sol";
 import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 /**
  * AbstractCradleAssetManager
@@ -14,7 +15,7 @@ import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
  * - CradleNativeAssetManager
  * - CradleLendingAssetManager
  */
-abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, AbstractContractAuthority {
+abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, ExpiryHelper, AbstractContractAuthority {
     address public token;
 
     constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList) payable AbstractContractAuthority(aclContract, allowList) {
