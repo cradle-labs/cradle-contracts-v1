@@ -5,7 +5,6 @@ import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenServic
 import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
 import {KeyHelper} from "@hedera/hedera-token-service/KeyHelper.sol";
-import {IHRC719} from "@hedera/hedera-token-service/IHRC719.sol";
 import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 /**
  * AbstractCradleAssetManager
@@ -95,11 +94,6 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, A
      * handles mint and token transfer in a single transaction
      */
     function airdropTokens(address target, uint64 amount) public onlyAuthorized {
-        bool isAssociated = IHRC719(token).isAssociated();
-
-        if (!isAssociated) {
-            revert("Token is not associated");
-        }
 
         IHederaTokenService.AccountAmount memory recipientAccount;
         recipientAccount.accountID = target;
