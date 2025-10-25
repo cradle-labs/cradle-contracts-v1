@@ -30,11 +30,13 @@ contract LendingPoolFactory {
         uint64 liquidationDiscount,
         uint64 reserveFactor,
         address lending,
-        string memory yieldAsset,
-        string memory yieldAssetSymbol,
+        address yieldContract,
         string memory lendingPool
-    ) payable public onlyAuthorized  {
-        AssetLendingPool pool = new AssetLendingPool{value: msg.value}(
+    ) public onlyAuthorized  {
+
+
+
+        AssetLendingPool pool = new AssetLendingPool(
             ltv,
             optimalUtilization,
             baseRate,
@@ -44,8 +46,7 @@ contract LendingPoolFactory {
             liquidationDiscount,
             reserveFactor,
             lending,
-            yieldAsset,
-            yieldAssetSymbol,
+            yieldContract,
             lendingPool,
             aclContract,
             uint64(2)
