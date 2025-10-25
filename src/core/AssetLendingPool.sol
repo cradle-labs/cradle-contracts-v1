@@ -167,46 +167,46 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         return (borrowRate * currentUtilization * (BASE_POINT - reserveFactor)) / (BASE_POINT * BASE_POINT);
     }
 
-//    /**
-//     * @notice Update the borrow index based on time elapsed and current borrow rate
-//     */
-//    function updateBorrowIndex() public {
-//        uint256 secondsElapsed = block.timestamp - lastUpdatedTimestamp;
-//
-//        if (secondsElapsed == 0) {
-//            return; // No time passed, no update needed
-//        }
-//
-//        uint256 borrowRate = getBorrowRate();
-//
-//        // Index growth = currentIndex * ratePerSecond * secondsElapsed
-//        // ratePerSecond = borrowRate / BASE_POINT / SECONDS_PER_YEAR
-//        // Rearranged: borrowIndex * borrowRate * secondsElapsed / (BASE_POINT * SECONDS_PER_YEAR)
-//
-//        uint256 indexGrowth = (borrowIndex * borrowRate * secondsElapsed) / (BASE_POINT * SECONDS_PER_YEAR);
-//
-//        borrowIndex += indexGrowth;
-//        lastUpdatedTimestamp = block.timestamp;
-//    }
+    /**
+     * @notice Update the borrow index based on time elapsed and current borrow rate
+     */
+    function updateBorrowIndex() public {
+        uint256 secondsElapsed = block.timestamp - lastUpdatedTimestamp;
 
-//    /**
-//     * @notice Update the supply index based on time elapsed and current supply rate
-//     */
-//    function updateSupplyIndex() public {
-//        uint256 secondsElapsed = block.timestamp - lastUpdatedTimestamp;
-//
-//        if (secondsElapsed == 0) {
-//            return;
-//        }
-//
-//        uint256 supplyRate = getSupplyRate();
-//
-//        // Same calculation as borrow index but with supply rate
-//        uint256 indexGrowth = (supplyIndex * supplyRate * secondsElapsed) / (BASE_POINT * SECONDS_PER_YEAR);
-//
-//        supplyIndex += indexGrowth;
-//        lastUpdatedTimestamp = block.timestamp;
-//    }
+        if (secondsElapsed == 0) {
+            return; // No time passed, no update needed
+        }
+
+        uint256 borrowRate = getBorrowRate();
+
+        // Index growth = currentIndex * ratePerSecond * secondsElapsed
+        // ratePerSecond = borrowRate / BASE_POINT / SECONDS_PER_YEAR
+        // Rearranged: borrowIndex * borrowRate * secondsElapsed / (BASE_POINT * SECONDS_PER_YEAR)
+
+        uint256 indexGrowth = (borrowIndex * borrowRate * secondsElapsed) / (BASE_POINT * SECONDS_PER_YEAR);
+
+        borrowIndex += indexGrowth;
+        lastUpdatedTimestamp = block.timestamp;
+    }
+
+    /**
+     * @notice Update the supply index based on time elapsed and current supply rate
+     */
+    function updateSupplyIndex() public {
+        uint256 secondsElapsed = block.timestamp - lastUpdatedTimestamp;
+
+        if (secondsElapsed == 0) {
+            return;
+        }
+
+        uint256 supplyRate = getSupplyRate();
+
+        // Same calculation as borrow index but with supply rate
+        uint256 indexGrowth = (supplyIndex * supplyRate * secondsElapsed) / (BASE_POINT * SECONDS_PER_YEAR);
+
+        supplyIndex += indexGrowth;
+        lastUpdatedTimestamp = block.timestamp;
+    }
 
     /**
      * @notice Update both indices atomically
