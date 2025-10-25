@@ -3,35 +3,36 @@ pragma solidity ^0.8.13;
 
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 import {ICradleAccount, CradleAccount} from "./CradleAccount.sol";
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 /**
  * AbstractAssetIssuer
  * The issuer manages issuing of bridged assets to bridgers as well as buying back assets from bridgers
  */
 
 abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
-
     address public reserveToken;
 
     CradleAccount treasury;
     mapping(string => AbstractCradleAssetManager) public bridgedAssets;
 
-    constructor(address aclContract, uint64 allowList, address _reserveToken) AbstractContractAuthority(aclContract, allowList) {
+    constructor(address aclContract, uint64 allowList, address _reserveToken)
+        AbstractContractAuthority(aclContract, allowList)
+    {
         treasury = new CradleAccount("treasury", aclContract, allowList);
         reserveToken = _reserveToken;
-
-        bytes memory data = abi.encodeWithSignature("grantAccess(uint64,address)", 5, address(this));
-
-        (bool success, ) = aclContract.delegatecall(data);
-
-        if(!success){
-            revert("Failed to add contract to allow list");
-        }
     }
 
-    function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) internal virtual returns (AbstractCradleAssetManager);
+    function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList)
+        internal
+        virtual
+        returns (AbstractCradleAssetManager);
 
-    function createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList) external payable onlyAuthorized returns (address) {
+    function createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList)
+        external
+        payable
+        onlyAuthorized
+        returns (address)
+    {
         // TODO: metadata missing needs to be added
         AbstractCradleAssetManager asset = _createAsset(_name, _symbol, aclContract, allowList);
         bridgedAssets[_symbol] = asset;
@@ -39,7 +40,7 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
     }
 
     function lockReserves(address user, uint256 amount) public onlyAuthorized {
-        // TODO: change this to just take out the money and place it in the reserve account 
+        // TODO: change this to just take out the money and place it in the reserve account
         ICradleAccount(user).lockAsset(reserveToken, amount);
     }
 

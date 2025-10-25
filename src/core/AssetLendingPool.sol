@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {CradleAccount, ICradleAccount} from "./CradleAccount.sol";
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 import {CradleLendingAssetManager} from "./CradleLendingAssetManager.sol";
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
@@ -49,12 +49,29 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     // Events
     event Deposited(address indexed user, uint256 amount, uint256 yieldTokensMinted);
     event Withdrawn(address indexed user, uint256 yieldTokensBurned, uint256 underlyingAmount);
-    event Borrowed(address indexed user, address indexed collateralAsset, uint256 collateralAmount, uint256 borrowAmount, uint256 borrowIndex);
-    event Repaid(address indexed user, address indexed collateralAsset, uint256 repaidAmount, uint256 principalRepaid, uint256 interestPaid);
-    event Liquidated(address indexed liquidator, address indexed borrower, address indexed collateralAsset, uint256 debtCovered, uint256 collateralSeized);
+    event Borrowed(
+        address indexed user,
+        address indexed collateralAsset,
+        uint256 collateralAmount,
+        uint256 borrowAmount,
+        uint256 borrowIndex
+    );
+    event Repaid(
+        address indexed user,
+        address indexed collateralAsset,
+        uint256 repaidAmount,
+        uint256 principalRepaid,
+        uint256 interestPaid
+    );
+    event Liquidated(
+        address indexed liquidator,
+        address indexed borrower,
+        address indexed collateralAsset,
+        uint256 debtCovered,
+        uint256 collateralSeized
+    );
     event IndicesUpdated(uint256 newBorrowIndex, uint256 newSupplyIndex, uint256 timestamp);
     event OracleUpdated(address indexed asset, uint256 newMultiplier);
-
 
     constructor(
         uint64 _ltv,
@@ -71,9 +88,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         string memory lendingPool,
         address aclContract,
         uint64 allowList
-    )
-    AbstractContractAuthority (aclContract, allowList)
-     {
+    ) AbstractContractAuthority(aclContract, allowList) {
         ltv = _ltv;
         optimalUtilization = _optimalUtilization;
         baseRate = _baseRate;
@@ -96,14 +111,6 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         totalBorrowed = 0;
         totalSupplied = 0;
-
-        bytes memory data = abi.encodeWithSignature("grantAccess(uint64,address)", 3, address(this));
-
-        (bool success, ) = aclContract.delegatecall(data);
-
-        if(!success){
-            revert("Failed to grant access to lending pool");
-        }
     }
 
     /**
@@ -284,11 +291,11 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
      * @return underlyingValue The current value in underlying tokens
      * @return currentSupplyAPY The current supply APY in basis points
      */
-    function getUserDepositPosition(address user) external view returns (
-        uint256 yieldTokenBalance,
-        uint256 underlyingValue,
-        uint256 currentSupplyAPY
-    ) {
+    function getUserDepositPosition(address user)
+        external
+        view
+        returns (uint256 yieldTokenBalance, uint256 underlyingValue, uint256 currentSupplyAPY)
+    {
         yieldTokenBalance = IERC20(yieldBearingAsset.token()).balanceOf(user);
         underlyingValue = calculateCurrentDeposit(yieldTokenBalance);
         currentSupplyAPY = getSupplyRate();
@@ -306,13 +313,17 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
      * @return healthFactor The position's health factor (1e18 = 1.0)
      * @return borrowIndex The user's borrow index
      */
-    function getUserBorrowPosition(address user, address collateralAsset) external view returns (
-        uint256 principalBorrowed,
-        uint256 currentDebt,
-        uint256 collateralAmount,
-        uint256 healthFactor,
-        uint256 borrowIndex
-    ) {
+    function getUserBorrowPosition(address user, address collateralAsset)
+        external
+        view
+        returns (
+            uint256 principalBorrowed,
+            uint256 currentDebt,
+            uint256 collateralAmount,
+            uint256 healthFactor,
+            uint256 borrowIndex
+        )
+    {
         principalBorrowed = ICradleAccount(user).getLoanAmount(address(this), collateralAsset);
         borrowIndex = ICradleAccount(user).getLoanBlockIndex(address(this), collateralAsset);
         collateralAmount = ICradleAccount(user).getCollateral(address(this), collateralAsset);
@@ -348,10 +359,11 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
      * @return isLiquidatable True if position can be liquidated
      * @return healthFactor The current health factor
      */
-    function isPositionLiquidatable(address user, address collateralAsset) external view returns (
-        bool isLiquidatable,
-        uint256 healthFactor
-    ) {
+    function isPositionLiquidatable(address user, address collateralAsset)
+        external
+        view
+        returns (bool isLiquidatable, uint256 healthFactor)
+    {
         uint256 principalBorrowed = ICradleAccount(user).getLoanAmount(address(this), collateralAsset);
 
         if (principalBorrowed == 0) {
@@ -378,14 +390,18 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
      * @return supplyAPY Current supply APY in basis points
      * @return borrowAPY Current borrow APY in basis points
      */
-    function getPoolStats() external view returns (
-        uint256 totalSupply,
-        uint256 totalBorrow,
-        uint256 availableLiquidity,
-        uint256 utilizationRate,
-        uint256 supplyAPY,
-        uint256 borrowAPY
-    ) {
+    function getPoolStats()
+        external
+        view
+        returns (
+            uint256 totalSupply,
+            uint256 totalBorrow,
+            uint256 availableLiquidity,
+            uint256 utilizationRate,
+            uint256 supplyAPY,
+            uint256 borrowAPY
+        )
+    {
         totalSupply = totalSupplied;
         totalBorrow = totalBorrowed;
         availableLiquidity = totalSupplied > totalBorrowed ? totalSupplied - totalBorrowed : 0;
@@ -428,7 +444,11 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         emit Withdrawn(user, yieldTokenAmount, underlyingAmount);
     }
 
-    function borrow(address user, uint256 collateralAmount, address collateralAsset) public onlyAuthorized nonReentrant {
+    function borrow(address user, uint256 collateralAmount, address collateralAsset)
+        public
+        onlyAuthorized
+        nonReentrant
+    {
         updateIndices();
 
         uint256 multiplier = getAssetMultiplier(collateralAsset);
@@ -500,7 +520,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         // If debtToCover = 1000 USDC and multiplier = 2000 (1 ETH = 2000 USDC scaled to 1e18)
         // collateralAmount = (1000 * 1e18) / 2000 = 0.5 ETH
         uint256 collateralAmountToReceive = (debtToCover * 1e18) / multiplier;
-        uint256 collateralAmountWithBonus = (collateralAmountToReceive * (BASE_POINT + liquidationDiscount)) / BASE_POINT;
+        uint256 collateralAmountWithBonus =
+            (collateralAmountToReceive * (BASE_POINT + liquidationDiscount)) / BASE_POINT;
 
         uint256 positionLoanAmount = ICradleAccount(borrower).getLoanAmount(address(this), collateralAsset);
         uint256 positionCollateralAmount = ICradleAccount(borrower).getCollateral(address(this), collateralAsset);

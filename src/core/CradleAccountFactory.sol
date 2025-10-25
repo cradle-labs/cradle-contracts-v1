@@ -10,7 +10,6 @@ import {AbstractContractAuthority} from "../core/AbstractContractAuthority.sol";
  * @dev Tracks all created accounts and provides lookup functionality
  */
 contract CradleAccountFactory is AbstractContractAuthority {
-
     // Mapping from controller identifier to CradleAccount address
     mapping(string => address) public accountsByController;
 
@@ -25,10 +24,7 @@ contract CradleAccountFactory is AbstractContractAuthority {
 
     // Events
     event AccountCreated(
-        address indexed accountAddress,
-        string indexed controller,
-        address indexed creator,
-        uint64 allowList
+        address indexed accountAddress, string indexed controller, address indexed creator, uint64 allowList
     );
     event AccountLinkedToUser(address indexed accountAddress, address indexed user);
     event AccountUnlinkedFromUser(address indexed accountAddress, address indexed user);
@@ -47,21 +43,18 @@ contract CradleAccountFactory is AbstractContractAuthority {
      * @param accountAllowList Access control level for the new account
      * @return accountAddress The address of the newly created CradleAccount
      */
-    function createAccount(
-        string memory controller,
-        uint64 accountAllowList
-    ) public onlyAuthorized returns (address accountAddress) {
+    function createAccount(string memory controller, uint64 accountAllowList)
+        public
+        onlyAuthorized
+        returns (address accountAddress)
+    {
         // Check if account already exists for this controller
         if (accountsByController[controller] != address(0)) {
             revert AccountAlreadyExists(controller);
         }
 
         // Create new CradleAccount
-        CradleAccount newAccount = new CradleAccount(
-            controller,
-            address(acl),
-            accountAllowList
-        );
+        CradleAccount newAccount = new CradleAccount(controller, address(acl), accountAllowList);
 
         accountAddress = address(newAccount);
 
@@ -82,11 +75,11 @@ contract CradleAccountFactory is AbstractContractAuthority {
      * @param accountAllowList Access control level for the new account
      * @return accountAddress The address of the newly created CradleAccount
      */
-    function createAccountForUser(
-        string memory controller,
-        address user,
-        uint64 accountAllowList
-    ) external onlyAuthorized returns (address accountAddress) {
+    function createAccountForUser(string memory controller, address user, uint64 accountAllowList)
+        external
+        onlyAuthorized
+        returns (address accountAddress)
+    {
         // Check if user already has an account
         if (accountsByUser[user] != address(0)) {
             revert UserAlreadyHasAccount(user);
@@ -182,11 +175,7 @@ contract CradleAccountFactory is AbstractContractAuthority {
      * @param endIndex Ending index (exclusive)
      * @return accounts Array of CradleAccount addresses
      */
-    function getAccountsRange(uint256 startIndex, uint256 endIndex)
-        external
-        view
-        returns (address[] memory accounts)
-    {
+    function getAccountsRange(uint256 startIndex, uint256 endIndex) external view returns (address[] memory accounts) {
         require(startIndex < endIndex, "Invalid range");
         require(endIndex <= allAccounts.length, "End index out of bounds");
 
@@ -215,10 +204,11 @@ contract CradleAccountFactory is AbstractContractAuthority {
      * @param accountAllowLists Array of access control levels (must match controllers length)
      * @return accountAddresses Array of created CradleAccount addresses
      */
-    function batchCreateAccounts(
-        string[] memory controllers,
-        uint64[] memory accountAllowLists
-    ) external onlyAuthorized returns (address[] memory accountAddresses) {
+    function batchCreateAccounts(string[] memory controllers, uint64[] memory accountAllowLists)
+        external
+        onlyAuthorized
+        returns (address[] memory accountAddresses)
+    {
         require(controllers.length == accountAllowLists.length, "Array length mismatch");
 
         accountAddresses = new address[](controllers.length);
@@ -235,10 +225,7 @@ contract CradleAccountFactory is AbstractContractAuthority {
      * @return totalAccounts Total number of accounts created
      * @return totalLinkedUsers Total number of users with linked accounts
      */
-    function getStats() external view returns (
-        uint256 totalAccounts,
-        uint256 totalLinkedUsers
-    ) {
+    function getStats() external view returns (uint256 totalAccounts, uint256 totalLinkedUsers) {
         totalAccounts = allAccounts.length;
 
         // Count linked users by iterating through accounts
@@ -259,7 +246,9 @@ contract CradleAccountFactory is AbstractContractAuthority {
  */
 interface ICradleAccountFactory {
     function createAccount(string memory controller, uint64 accountAllowList) external returns (address);
-    function createAccountForUser(string memory controller, address user, uint64 accountAllowList) external returns (address);
+    function createAccountForUser(string memory controller, address user, uint64 accountAllowList)
+        external
+        returns (address);
     function getAccountByController(string memory controller) external view returns (address);
     function getAccountByUser(address user) external view returns (address);
     function isAccountValid(address account) external view returns (bool);

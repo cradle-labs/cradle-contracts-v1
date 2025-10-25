@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+
+import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 
 /**
  * @title AbstractAssetPriceOracle
  * @notice Base contract for price oracles with ACL-based access control
  */
 abstract contract AbstractAssetPriceOracle is AbstractContractAuthority {
-
     // Define which ACL level can update prices
     uint64 public constant ORACLE_UPDATER_LEVEL = 2;
 
@@ -25,7 +25,7 @@ abstract contract AbstractAssetPriceOracle is AbstractContractAuthority {
     error InvalidPrice();
     error StalePrice();
 
-    constructor(address aclContract, uint64 allowList ) AbstractContractAuthority( aclContract, allowList) {
+    constructor(address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
         require(aclContract != address(0), "Invalid ACL address");
     }
 
@@ -46,13 +46,10 @@ abstract contract AbstractAssetPriceOracle is AbstractContractAuthority {
      * @param tokens Array of token addresses
      * @param newPrices Array of corresponding prices
      */
-    function updatePricesBatch(
-        address[] calldata tokens,
-        uint128[] calldata newPrices
-    ) external onlyAuthorized {
+    function updatePricesBatch(address[] calldata tokens, uint128[] calldata newPrices) external onlyAuthorized {
         require(tokens.length == newPrices.length, "Length mismatch");
 
-        for (uint i = 0; i < tokens.length; i++) {
+        for (uint256 i = 0; i < tokens.length; i++) {
             if (tokens[i] != address(0)) {
                 prices[tokens[i]] = newPrices[i];
                 lastUpdated[tokens[i]] = block.timestamp;

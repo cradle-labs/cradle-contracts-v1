@@ -6,7 +6,7 @@ import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
 import {KeyHelper} from "@hedera/hedera-token-service/KeyHelper.sol";
 import {ExpiryHelper} from "@hedera/hedera-token-service/ExpiryHelper.sol";
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 /**
  * AbstractCradleAssetManager
  * - This abstract contract offers an interface to be used by all other cradle issued contracts
@@ -15,10 +15,19 @@ import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
  * - CradleNativeAssetManager
  * - CradleLendingAssetManager
  */
-abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, ExpiryHelper, AbstractContractAuthority {
+
+abstract contract AbstractCradleAssetManager is
+    HederaTokenService,
+    KeyHelper,
+    ExpiryHelper,
+    AbstractContractAuthority
+{
     address public token;
 
-    constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList) payable AbstractContractAuthority(aclContract, allowList) {
+    constructor(string memory _name, string memory _symbol, address aclContract, uint64 allowList)
+        payable
+        AbstractContractAuthority(aclContract, allowList)
+    {
         IHederaTokenService.HederaToken memory tokenDetails;
         tokenDetails.name = _name;
         tokenDetails.symbol = _symbol;
@@ -64,7 +73,7 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, E
      * Protocol handles burning of the asset
      */
     function burn(uint64 amount) public onlyAuthorized {
-        (int256 _res, ) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
+        (int256 _res,) = HederaTokenService.burnToken(token, int64(amount), new int64[](0));
 
         if (_res != HederaResponseCodes.SUCCESS) {
             revert("Failed to burn asset");
@@ -120,10 +129,9 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, E
     //     }
     // }
 
-
     function transferTokens(address target, uint64 amount) public onlyAuthorized {
         int256 responseCode = HederaTokenService.transferToken(token, address(this), target, int64(amount));
-        
+
         if (responseCode != HederaResponseCodes.SUCCESS) {
             revert("Failed to transfer tokens");
         }
@@ -132,12 +140,12 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, E
     function airdropTokens(address target, uint64 amount) public onlyAuthorized {
         mint(amount);
         grantKyc(target);
-        transferTokens( target, amount);
+        transferTokens(target, amount);
     }
 
-    function grantKyc(address target) public onlyAuthorized() {
-        (, bool is_kyced ) = HederaTokenService.isKyc(token, target);
-        if(is_kyced){
+    function grantKyc(address target) public onlyAuthorized {
+        (, bool is_kyced) = HederaTokenService.isKyc(token, target);
+        if (is_kyced) {
             return;
         }
         int64 responseCode = HederaTokenService.grantTokenKyc(token, target);

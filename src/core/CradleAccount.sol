@@ -5,7 +5,7 @@ import {HederaResponseCodes} from "@hedera/HederaResponseCodes.sol";
 import {IHederaTokenService} from "@hedera/hedera-token-service/IHederaTokenService.sol";
 import {HederaTokenService} from "@hedera/hedera-token-service/HederaTokenService.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
 /**
  * CradleAccounts
@@ -16,13 +16,20 @@ import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
  *     - Orderbook Trade Settlements
  *     - Asset Bridging
  */
+
 contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
     IHederaTokenService constant hts = IHederaTokenService(address(0x167));
 
     event DepositReceived(address depositor, uint256 amount);
     event AssetLocked(address indexed asset, uint256 amount, uint256 totalLocked);
     event AssetUnlocked(address indexed asset, uint256 amount, uint256 totalLocked);
-    event LoanAdded(address indexed lender, address indexed collateral, uint256 loanAmount, uint256 collateralAmount, uint256 borrowIndex);
+    event LoanAdded(
+        address indexed lender,
+        address indexed collateral,
+        uint256 loanAmount,
+        uint256 collateralAmount,
+        uint256 borrowIndex
+    );
     event LoanRepaid(address indexed lender, address indexed collateral, uint256 loanAmount, uint256 collateralAmount);
     event AssetTransferred(address indexed to, address indexed asset, uint256 amount);
     event TokenAssociated(address indexed token);
@@ -56,7 +63,9 @@ contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
         emit DepositReceived(msg.sender, msg.value);
     }
 
-    constructor(string memory _controller, address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
+    constructor(string memory _controller, address aclContract, uint64 allowList)
+        AbstractContractAuthority(aclContract, allowList)
+    {
         controller = _controller;
     }
 

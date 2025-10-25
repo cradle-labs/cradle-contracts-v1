@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {ICradleAccount} from "./CradleAccount.sol";
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
+import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 /**
  * CradleOrderBookSettler
  * - handles settling of offchain orders in an atomic way
@@ -10,7 +10,6 @@ import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
  */
 
 contract CradleOrderBookSettler is AbstractContractAuthority {
-
     event OrderSettled(
         address indexed bidder,
         address indexed asker,
@@ -20,15 +19,7 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
         uint256 askAssetAmount
     );
 
-    constructor(address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {
-        bytes memory data = abi.encodeWithSignature("grantAccess(uint64,address)", 6, address(this));
-
-        (bool success, ) = aclContract.delegatecall(data);
-
-        if(!success){
-            revert("Failed to grant access to lending pool");
-        }
-    }
+    constructor(address aclContract, uint64 allowList) AbstractContractAuthority(aclContract, allowList) {}
 
     function settleOrder(
         address _bidder,
