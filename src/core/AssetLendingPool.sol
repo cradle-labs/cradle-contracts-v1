@@ -90,7 +90,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         string memory lendingPool,
         address aclContract,
         uint64 allowList
-    ) AbstractContractAuthority(aclContract, allowList) {
+    ) payable AbstractContractAuthority(aclContract, allowList) {
         ltv = _ltv;
         optimalUtilization = _optimalUtilization;
         baseRate = _baseRate;
@@ -109,7 +109,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         supplyIndex = 1e18;
         lastUpdatedTimestamp = block.timestamp;
 
-        yieldBearingAsset = new CradleLendingAssetManager(yieldAsset, yieldAssetSymbol, aclContract, uint64(1));
+        yieldBearingAsset = new CradleLendingAssetManager{value: msg.value}(yieldAsset, yieldAssetSymbol, aclContract, uint64(1));
 
         totalBorrowed = 0;
         totalSupplied = 0;
@@ -131,7 +131,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         return address(reserve);
     }
 
-    function getTreasureyAccount() public view returns (address) {
+    function getTreasuryAccount() public view returns (address) {
         return address(treasury);
     }
 
