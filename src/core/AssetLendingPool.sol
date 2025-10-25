@@ -7,6 +7,7 @@ import {CradleLendingAssetManager} from "./CradleLendingAssetManager.sol";
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
+import {ERC20} from "@openzeppelin/token/ERC20/ERC20.sol";
 
 /**
  * The AssetLendingPool holds util logic for the lending pools
@@ -15,6 +16,7 @@ import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
 contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     // Use 10000 for basis points (1 bp = 0.01%, so 100 = 1%, 10000 = 100%)
     uint256 public constant BASE_POINT = 10000;
+    uint256 public constant PRICE_PRECISION = 1e18;
     uint256 public constant SECONDS_PER_YEAR = 365.25 days; // 31557600 seconds
 
     // Maximum index value to prevent overflow (set to ~10^20 to allow for extreme growth scenarios)
@@ -330,9 +332,10 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         if (principalBorrowed > 0) {
             currentDebt = calculateCurrentDebt(principalBorrowed, borrowIndex);
-
+            uint8 decimals = ERC20(collateralAsset).decimals();
+            uint256 precision = 10**decimals;
             uint256 multiplier = assetMultiplierOracle[collateralAsset];
-            uint256 collateralValue = collateralAmount * multiplier;
+            uint256 collateralValue = (collateralAmount * multiplier) / precision;
             healthFactor = calculateHealthFactor(collateralValue, currentDebt);
         } else {
             currentDebt = 0;
@@ -348,7 +351,9 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
      */
     function getMaxBorrowAmount(uint256 collateralAmount, address collateralAsset) external view returns (uint256) {
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
-        uint256 collateralValue = collateralAmount * multiplier;
+        uint8 decimals = ERC20(collateralAsset).decimals();
+            uint256 precision = 10**decimals;
+        uint256 collateralValue = (collateralAmount * multiplier) / precision;
         return (collateralValue * ltv) / BASE_POINT;
     }
 
@@ -373,9 +378,12 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         uint256 borrowIndex = ICradleAccount(user).getLoanBlockIndex(address(this), collateralAsset);
         uint256 collateralAmount = ICradleAccount(user).getCollateral(address(this), collateralAsset);
 
+        uint8 decimals = ERC20(collateralAsset).decimals();
+        uint256 precision = 10**decimals;
+
         uint256 currentDebt = calculateCurrentDebt(principalBorrowed, borrowIndex);
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
-        uint256 collateralValue = collateralAmount * multiplier;
+        uint256 collateralValue = (collateralAmount * multiplier) / precision;
 
         healthFactor = calculateHealthFactor(collateralValue, currentDebt);
         isLiquidatable = healthFactor < 1e18;
@@ -451,8 +459,11 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     {
         updateIndices();
 
+        uint8 decimals = ERC20(collateralAsset).decimals();
+        uint256 precision = 10**decimals;
+
         uint256 multiplier = getAssetMultiplier(collateralAsset);
-        uint256 collateralValue = collateralAmount * multiplier;
+        uint256 collateralValue = (collateralAmount * multiplier) / precision;
         uint256 maxBorrow = (collateralValue * ltv) / BASE_POINT;
 
         require(totalSupplied - totalBorrowed >= maxBorrow, "Insufficient liquidity");
@@ -514,12 +525,14 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         nonReentrant
     {
         updateIndices();
+        uint8 decimals = ERC20(collateralAsset).decimals();
+        uint256 precision = 10**decimals;
 
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
         // Fixed: Multiply by 1e18 then divide by multiplier to get correct collateral amount
         // If debtToCover = 1000 USDC and multiplier = 2000 (1 ETH = 2000 USDC scaled to 1e18)
         // collateralAmount = (1000 * 1e18) / 2000 = 0.5 ETH
-        uint256 collateralAmountToReceive = (debtToCover * 1e18) / multiplier;
+        uint256 collateralAmountToReceive = (debtToCover * precision) / multiplier;
         uint256 collateralAmountWithBonus =
             (collateralAmountToReceive * (BASE_POINT + liquidationDiscount)) / BASE_POINT;
 
@@ -527,7 +540,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         uint256 positionCollateralAmount = ICradleAccount(borrower).getCollateral(address(this), collateralAsset);
         uint256 positionBorrowIndex = ICradleAccount(borrower).getLoanBlockIndex(address(this), collateralAsset);
 
-        uint256 positionCollateralValue = positionCollateralAmount * multiplier;
+        uint256 positionCollateralValue = (positionCollateralAmount * multiplier) / precision;
 
         uint256 currentDebt = calculateCurrentDebt(positionLoanAmount, positionBorrowIndex);
 
@@ -540,7 +553,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
             address(this), collateralAsset, principalReduction, collateralAmountWithBonus, borrowIndex
         );
 
-        totalBorrowed -= debtToCover;
+        totalBorrowed -= principalReduction;
 
         ICradleAccount(liquidator).transferAsset(address(reserve), lendingAsset.token(), debtToCover);
 
