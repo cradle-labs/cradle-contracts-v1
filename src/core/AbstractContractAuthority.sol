@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
-import { AccessController } from "./AccessController.sol";
+
+import {AccessController} from "./AccessController.sol";
 
 /**
-AbstractContractAuthority
-- ContractAuthority handles access control for subcontracts that're gonna be controlled by multiple super contracts
+ * AbstractContractAuthority
+ * - ContractAuthority handles access control for subcontracts that're gonna be controlled by multiple super contracts
  */
 abstract contract AbstractContractAuthority {
-
     uint64 public controlAllowList;
     AccessController public acl;
 
@@ -15,7 +15,7 @@ abstract contract AbstractContractAuthority {
         uint64[] memory allowList = _getAllowList(controlAllowList);
 
         bool hasAccess = false;
-        for (uint i = 0; i < allowList.length; i++) {
+        for (uint256 i = 0; i < allowList.length; i++) {
             if (acl.hasAccess(allowList[i], msg.sender)) {
                 hasAccess = true;
                 break;
@@ -31,7 +31,7 @@ abstract contract AbstractContractAuthority {
             uint64[] memory list = new uint64[](1);
             list[0] = 0;
             return list;
-        }else {
+        } else {
             // TODO: i'm temporarily enabling control access across the board because of uncertainities that I need to verify with actual testing, will reenable more granular control later
             uint64[] memory list = new uint64[](6);
             list[0] = 0;
