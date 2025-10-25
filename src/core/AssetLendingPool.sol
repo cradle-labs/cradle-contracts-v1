@@ -127,6 +127,14 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         return (totalBorrowed * BASE_POINT) / totalSupplied;
     }
 
+    function getReserveAccount() public view returns (address) {
+        return address(reserve);
+    }
+
+    function getTreasureyAccount() public view returns (address) {
+        return address(treasury);
+    }
+
     /**
      * @notice Calculate current borrow rate based on utilization
      * @return Borrow rate in basis points per year (e.g., 500 = 5% APR)
