@@ -13,7 +13,7 @@ import { IERC20Metadata } from "@openzeppelin/token/ERC20/extensions/IERC20Metad
  * The AssetLendingPool holds util logic for the lending pools
  * to be inherited and used in different ways by the CradleBridgedAssetPools and CradleNativeAssetPools
  */
-contract AssetLendingPool is AbstractContractAuthority {
+contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     // Use 10000 for basis points (1 bp = 0.01%, so 100 = 1%, 10000 = 100%)
     uint256 public constant BASE_POINT = 10000;
     uint256 public constant PRICE_PRECISION = 1e18;
@@ -425,7 +425,7 @@ contract AssetLendingPool is AbstractContractAuthority {
         borrowAPY = getBorrowRate();
     }
 
-    function deposit(address user, uint256 amount) public onlyAuthorized {
+    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant {
         updateIndices();
 
         // Fixed: Multiply before divide to prevent precision loss
@@ -441,7 +441,7 @@ contract AssetLendingPool is AbstractContractAuthority {
         emit Deposited(user, amount, yieldTokensToMint);
     }
 
-    function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized {
+    function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized nonReentrant {
         updateIndices();
 
         // Fixed: Divide by 1e18 to get actual underlying amount
@@ -461,7 +461,7 @@ contract AssetLendingPool is AbstractContractAuthority {
 
     function borrow(address user, uint256 collateralAmount, address collateralAsset)
         public
-        onlyAuthorized
+        onlyAuthorized nonReentrant
     {
         updateIndices();
 
@@ -527,7 +527,7 @@ contract AssetLendingPool is AbstractContractAuthority {
 
     function liquidate(address liquidator, address borrower, uint256 debtToCover, address collateralAsset)
         public
-        onlyAuthorized
+        onlyAuthorized nonReentrant
     {
         updateIndices();
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
