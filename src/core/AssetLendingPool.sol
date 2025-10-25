@@ -35,7 +35,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     uint64 public liquidationDiscount;
     uint64 public reserveFactor; // e.g., 1000 = 10%
 
-    AbstractCradleAssetManager public lendingAsset;
+    address public lendingAsset;
     AbstractCradleAssetManager public yieldBearingAsset;
 
     // Indices start at 1e18 for precision (WAD math)
@@ -84,7 +84,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         uint64 _liquidationThreshold,
         uint64 _liquidationDiscount,
         uint64 _reserveFactor,
-        AbstractCradleAssetManager _lending,
+        address _lending,
         string memory yieldAsset,
         string memory yieldAssetSymbol,
         string memory lendingPool,
@@ -427,7 +427,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         totalSupplied += amount;
 
-        ICradleAccount(user).transferAsset(address(reserve), lendingAsset.token(), amount);
+        ICradleAccount(user).transferAsset(address(reserve), lendingAsset, amount);
 
         yieldBearingAsset.airdropTokens(user, uint64(yieldTokensToMint));
 
@@ -447,7 +447,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         yieldBearingAsset.wipe(uint64(yieldTokenAmount), user);
 
-        reserve.transferAsset(user, lendingAsset.token(), underlyingAmount);
+        reserve.transferAsset(user, lendingAsset, underlyingAmount);
 
         emit Withdrawn(user, yieldTokenAmount, underlyingAmount);
     }
@@ -474,7 +474,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         totalBorrowed += maxBorrow;
 
-        reserve.transferAsset(user, lendingAsset.token(), maxBorrow);
+        reserve.transferAsset(user, lendingAsset, maxBorrow);
 
         emit Borrowed(user, collateralAsset, collateralAmount, maxBorrow, borrowIndex);
     }
@@ -511,9 +511,9 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         totalBorrowed -= principalRepaid;
 
-        ICradleAccount(user).transferAsset(address(reserve), lendingAsset.token(), toPool);
+        ICradleAccount(user).transferAsset(address(reserve), lendingAsset, toPool);
         if (reserveAmount > 0) {
-            ICradleAccount(user).transferAsset(address(treasury), lendingAsset.token(), reserveAmount);
+            ICradleAccount(user).transferAsset(address(treasury), lendingAsset, reserveAmount);
         }
 
         emit Repaid(user, collateralizedAsset, repayAmount, principalRepaid, interestPaid);
@@ -555,7 +555,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         totalBorrowed -= principalReduction;
 
-        ICradleAccount(liquidator).transferAsset(address(reserve), lendingAsset.token(), debtToCover);
+        ICradleAccount(liquidator).transferAsset(address(reserve), lendingAsset, debtToCover);
 
         ICradleAccount(borrower).transferAsset(liquidator, collateralAsset, collateralAmountWithBonus);
 
