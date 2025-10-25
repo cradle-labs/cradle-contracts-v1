@@ -96,14 +96,6 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         totalBorrowed = 0;
         totalSupplied = 0;
-
-        bytes memory data = abi.encodeWithSignature("grantAccess(uint64,address)", 3, address(this));
-
-        (bool success, ) = aclContract.delegatecall(data);
-
-        if(!success){
-            revert("Failed to grant access to lending pool");
-        }
     }
 
     /**

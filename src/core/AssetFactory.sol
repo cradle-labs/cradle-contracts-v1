@@ -10,7 +10,6 @@ contract AssetFactory is AbstractContractAuthority {
     
 
     constructor(address aclContract) AbstractContractAuthority (aclContract, uint64(0)){
-        AccessController(aclContract).grantAccess(0, address(this));
     }
 
 
