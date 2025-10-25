@@ -19,7 +19,7 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
         uint256 askAssetAmount
     );
 
-    constructor(address aclContract) AbstractContractAuthority(aclContract, uint64(0)) {}
+    constructor(address aclContract) AbstractContractAuthority(aclContract, uint64(1)) {}
 
     function settleOrder(
         address _bidder,
