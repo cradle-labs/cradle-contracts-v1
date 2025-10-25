@@ -131,6 +131,19 @@ abstract contract AbstractCradleAssetManager is HederaTokenService, KeyHelper, E
 
     function airdropTokens(address target, uint64 amount) public onlyAuthorized {
         mint(amount);
+        grantKyc(target);
         transferTokens( target, amount);
+    }
+
+    function grantKyc(address target) public onlyAuthorized() {
+        (, bool is_kyced ) = HederaTokenService.isKyc(token, target);
+        if(is_kyced){
+            return;
+        }
+        int64 responseCode = HederaTokenService.grantTokenKyc(token, target);
+
+        if (responseCode != HederaResponseCodes.SUCCESS) {
+            revert("Faile to grant KYC");
+        }
     }
 }
