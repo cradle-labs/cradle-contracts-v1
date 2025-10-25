@@ -131,7 +131,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         return address(reserve);
     }
 
-    function getTreasureyAccount() public view returns (address) {
+    function getTreasuryAccount() public view returns (address) {
         return address(treasury);
     }
 
