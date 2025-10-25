@@ -2,14 +2,21 @@
 pragma solidity ^0.8.13;
 
 import { AssetLendingPool } from "./AssetLendingPool.sol";
-import { AbstractContractAuthority } from "./AbstractContractAuthority.sol";
 
-contract LendingPoolFactory is AbstractContractAuthority {
+contract LendingPoolFactory {
 
     mapping(string=>address) public pools;
+    address controller;
+    address aclContract;
 
-    constructor(address aclContract) AbstractContractAuthority(aclContract, uint64(0)) {
+    modifier onlyAuthorized(){ 
+        require(msg.sender == controller, "Unauthorized");
+        _;
+    }
 
+    constructor(address _aclContract) {
+        controller = msg.sender;
+        aclContract = _aclContract;
     }
 
 
@@ -40,7 +47,7 @@ contract LendingPoolFactory is AbstractContractAuthority {
             yieldAsset,
             yieldAssetSymbol,
             lendingPool,
-            address(acl),
+            aclContract,
             uint64(2)
         );
 
