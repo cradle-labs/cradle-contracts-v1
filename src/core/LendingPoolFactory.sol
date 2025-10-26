@@ -32,7 +32,7 @@ contract LendingPoolFactory {
         address lending,
         address yieldContract,
         string memory lendingPool
-    ) public onlyAuthorized  {
+    ) public onlyAuthorized returns (address)  {
 
 
 
@@ -53,6 +53,8 @@ contract LendingPoolFactory {
         );
 
         pools[lendingPool] = address(pool);
+
+        return address(pool);
     }
 
 
