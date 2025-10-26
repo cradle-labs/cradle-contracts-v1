@@ -414,7 +414,9 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
             uint256 availableLiquidity,
             uint256 utilizationRate,
             uint256 supplyAPY,
-            uint256 borrowAPY
+            uint256 borrowAPY,
+            uint256 borrowIndexValue,
+            uint256 supplyIndexValue
         )
     {
         totalSupply = totalSupplied;
@@ -424,10 +426,10 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         supplyAPY = getSupplyRate();
         borrowAPY = getBorrowRate();
 
-        return (totalSupply, totalBorrow, availableLiquidity, utilizationRate, supplyAPY, borrowAPY);
+        return (totalSupply, totalBorrow, availableLiquidity, utilizationRate, supplyAPY, borrowAPY, borrowIndex, supplyIndex);
     }
 
-    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant {
+    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant returns(uint256) {
         updateIndices();
 
         // Fixed: Multiply before divide to prevent precision loss
@@ -441,6 +443,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         yieldBearingAsset.airdropTokens(user, uint64(yieldTokensToMint));
 
         emit Deposited(user, amount, yieldTokensToMint);
+
+        return (supplyIndex);
     }
 
     function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized nonReentrant {
@@ -463,7 +467,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
     function borrow(address user, uint256 collateralAmount, address collateralAsset)
         public
-        onlyAuthorized nonReentrant
+        onlyAuthorized nonReentrant returns (uint256)
     {
         updateIndices();
 
@@ -485,6 +489,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         reserve.transferAsset(user, lendingAsset, maxBorrow);
 
         emit Borrowed(user, collateralAsset, collateralAmount, maxBorrow, borrowIndex);
+
+        return (borrowIndex);
     }
 
     function repay(address user, address collateralizedAsset, uint256 repayAmount) public onlyAuthorized {
