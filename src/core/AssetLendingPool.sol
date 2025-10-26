@@ -423,6 +423,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         utilizationRate = getUtilization();
         supplyAPY = getSupplyRate();
         borrowAPY = getBorrowRate();
+
+        return (totalSupply, totalBorrow, availableLiquidity, utilizationRate, supplyAPY, borrowAPY);
     }
 
     function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant {
