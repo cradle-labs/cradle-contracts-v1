@@ -12,10 +12,10 @@ contract AssetFactory is AbstractContractAuthority {
     function createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList)
         external
         payable
-        returns (address)
+        returns (address, address )
     {
         BaseAsset asset = new BaseAsset{value: msg.value}(_name, _symbol, aclContract, allowList);
 
-        return address(asset);
+        return (address(asset), asset.token());
     }
 }
