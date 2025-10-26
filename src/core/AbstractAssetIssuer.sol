@@ -31,12 +31,12 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
         external
         payable
         onlyAuthorized
-        returns (address)
+        returns (address, address )
     {
         // TODO: metadata missing needs to be added
         AbstractCradleAssetManager asset = _createAsset(_name, _symbol, aclContract, allowList);
         bridgedAssets[_symbol] = asset;
-        return address(asset);
+        return (address(asset), asset.token());
     }
 
     function lockReserves(address user, uint256 amount) public onlyAuthorized {
