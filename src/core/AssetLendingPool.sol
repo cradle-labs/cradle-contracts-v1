@@ -429,7 +429,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         return (totalSupply, totalBorrow, availableLiquidity, utilizationRate, supplyAPY, borrowAPY, borrowIndex, supplyIndex);
     }
 
-    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant returns(uint256) {
+    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant returns(uint256, uint256) {
         updateIndices();
 
         // Fixed: Multiply before divide to prevent precision loss
@@ -444,10 +444,10 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         emit Deposited(user, amount, yieldTokensToMint);
 
-        return (supplyIndex);
+        return (supplyIndex, yieldTokensToMint);
     }
 
-    function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized nonReentrant {
+    function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized nonReentrant returns (uint256, uint256) {
         updateIndices();
 
         // Fixed: Divide by 1e18 to get actual underlying amount
@@ -463,6 +463,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         reserve.transferAsset(user, lendingAsset, underlyingAmount);
 
         emit Withdrawn(user, yieldTokenAmount, underlyingAmount);
+
+        return (supplyIndex, underlyingAmount);
     }
 
     function borrow(address user, uint256 collateralAmount, address collateralAsset)
