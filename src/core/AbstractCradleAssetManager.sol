@@ -104,7 +104,7 @@ abstract contract AbstractCradleAssetManager is
      * handles mint and token transfer in a single transaction
      */
      function airdropTokens(address target, uint64 amount) public onlyAuthorized {
-
+         grantKyc(target);
          IHederaTokenService.AccountAmount memory recipientAccount;
          recipientAccount.accountID = target;
          recipientAccount.amount = int64(amount);
