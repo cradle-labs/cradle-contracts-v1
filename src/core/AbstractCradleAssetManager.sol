@@ -151,11 +151,13 @@ abstract contract AbstractCradleAssetManager is
 //    }
 
     function grantKyc(address target) public onlyAuthorized {
-        (, bool is_kyced) = HederaTokenService.isKyc(token, target);
+
+        (, bool is_kyced) = hts.isKyc(token, target);
         if (is_kyced) {
             return;
         }
-        int64 responseCode = HederaTokenService.grantTokenKyc(token, target);
+
+        int64 responseCode = hts.grantTokenKyc(token, target);
 
         if (responseCode != HederaResponseCodes.SUCCESS) {
             revert("Faile to grant KYC");
