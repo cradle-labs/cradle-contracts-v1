@@ -126,6 +126,16 @@ contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
      * transferAsset
      */
     function transferAsset(address to, address asset, uint256 amount) public onlyAuthorized nonReentrant {
+
+        if(asset == address(0)) {
+            uint256 tradableHbarBalance = getTradableBalance(asset);
+            if (amount > tradableHbarBalance) {
+                revert("insufficient HBAR to complete transfer");
+            }
+            transferHbar(to, amount);
+            return;
+        }
+
         approveSelfSpend(amount, asset);
         uint256 tradableBalance = getTradableBalance(asset);
         if (amount > tradableBalance) {
@@ -140,8 +150,23 @@ contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
         emit AssetTransferred(to, asset, amount);
     }
 
+    function transferHbar(address to, uint256 amount) public onlyAuthorized nonReentrant {
+        require(address(this).balance >= amount, "Insufficient HBAR balance");
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "HBAR transfer failed");
+
+        emit AssetTransferred(to, address(0), amount);
+    }
+
     function getTradableBalance(address asset) public view returns (uint256) {
         uint256 lockedAmount = lockedAssets[asset];
+        if (asset == address(0)) {
+            uint256 hbarBalance = address(this).balance;
+            if (lockedAmount > hbarBalance) {
+                return 0; // or revert with error
+            }
+            return hbarBalance - lockedAmount;
+        }
         uint256 assetBalance = IERC20(asset).balanceOf(address(this));
         if (lockedAmount > assetBalance) {
             return 0; // or revert with error
