@@ -131,6 +131,12 @@ abstract contract AbstractCradleAssetManager is
      }
 
     function transferTokens(address target, uint64 amount) public onlyAuthorized {
+        int64 resp = hts.approve(token, address(this), amount);
+
+        if (resp != HederaResponseCodes.SUCCESS) {
+            revert("Failed to approve tokens for transfer");
+        }
+
         int256 responseCode = HederaTokenService.transferToken(token, address(this), target, int64(amount));
 
         if (responseCode != HederaResponseCodes.SUCCESS) {
