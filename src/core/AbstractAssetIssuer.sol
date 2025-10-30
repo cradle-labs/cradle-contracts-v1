@@ -12,13 +12,13 @@ import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
     address public reserveToken;
 
-    CradleAccount treasury;
+    address public  treasury;
     mapping(string => AbstractCradleAssetManager) public bridgedAssets;
 
-    constructor(address aclContract, uint64 allowList, address _reserveToken)
+    constructor(address _treasury, address aclContract, uint64 allowList, address _reserveToken)
         AbstractContractAuthority(aclContract, allowList)
     {
-        treasury = new CradleAccount("treasury", aclContract, allowList);
+        treasury = _treasury;
         reserveToken = _reserveToken;
     }
 
@@ -40,7 +40,6 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
     }
 
     function lockReserves(address user, uint256 amount) public onlyAuthorized {
-        // TODO: change this to just take out the money and place it in the reserve account
         ICradleAccount(user).lockAsset(reserveToken, amount);
     }
 
@@ -51,7 +50,7 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
         AbstractCradleAssetManager asset = bridgedAssets[symbol];
         require(address(asset) != address(0), "Asset does not exist");
         ICradleAccount(user).unlockAsset(reserveToken, unlockAmount);
-        ICradleAccount(user).transferAsset(address(treasury), reserveToken, unlockAmount);
+        ICradleAccount(user).transferAsset(treasury, reserveToken, unlockAmount);
         asset.airdropTokens(user, uint64(mintAmount));
     }
 
@@ -68,6 +67,6 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
         require(address(asset) != address(0), "Asset does not exist");
         ICradleAccount(user).unlockAsset(asset.token(), burnAmount);
         asset.wipe(uint64(burnAmount), user);
-        treasury.transferAsset(user, reserveToken, releaseAmount);
+        ICradleAccount(treasury).transferAsset(user, reserveToken, releaseAmount);
     }
 }

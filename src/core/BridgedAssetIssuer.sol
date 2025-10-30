@@ -6,8 +6,8 @@ import {BridgedAsset} from "./BridgedAsset.sol";
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 
 contract BridgedAssetIssuer is AbstractAssetsIssuer {
-    constructor(address aclContract, uint64 allowList, address reserveToken)
-        AbstractAssetsIssuer(aclContract, allowList, reserveToken)
+    constructor(address treasury, address aclContract, uint64 allowList, address reserveToken)
+        AbstractAssetsIssuer(treasury, aclContract, allowList, reserveToken)
     {}
 
     function _createAsset(string memory _name, string memory _symbol, address aclContract, uint64 allowList)
