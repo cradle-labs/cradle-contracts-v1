@@ -51,6 +51,7 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
         require(address(asset) != address(0), "Asset does not exist");
         ICradleAccount(user).unlockAsset(reserveToken, unlockAmount);
         ICradleAccount(user).transferAsset(treasury, reserveToken, unlockAmount);
+        asset.mint(uint64 (mintAmount));
         asset.airdropTokens(user, uint64(mintAmount));
     }
 
