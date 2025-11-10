@@ -29,6 +29,8 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
         uint256 bidAssetAmount,
         uint256 askAssetAmount
     ) public onlyAuthorized {
+        ICradleAccount(_bidder).unlockAsset(askAsset, askAssetAmount);
+        ICradleAccount(_asker).unlockAsset(bidAsset, bidAssetAmount);
         ICradleAccount(_bidder).transferAsset(_asker, askAsset, askAssetAmount);
         ICradleAccount(_asker).transferAsset(_bidder, bidAsset, bidAssetAmount);
         emit OrderSettled(_bidder, _asker, bidAsset, askAsset, bidAssetAmount, askAssetAmount);
