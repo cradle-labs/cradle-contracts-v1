@@ -382,13 +382,13 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
             return (false, type(uint256).max);
         }
 
-        uint256 borrowIndex = ICradleAccount(user).getLoanBlockIndex(address(this), collateralAsset);
+        uint256 userBorrowIndex = ICradleAccount(user).getLoanBlockIndex(address(this), collateralAsset);
         uint256 collateralAmount = ICradleAccount(user).getCollateral(address(this), collateralAsset);
 
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
         uint256 precision = 10**decimals;
 
-        uint256 currentDebt = calculateCurrentDebt(principalBorrowed, borrowIndex);
+        uint256 currentDebt = calculateCurrentDebt(principalBorrowed, userBorrowIndex);
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
         uint256 collateralValue = (collateralAmount * multiplier) / precision;
 
@@ -469,7 +469,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
     function borrow(address user, uint256 collateralAmount, address collateralAsset)
         public
-        onlyAuthorized nonReentrant returns (uint256)
+        onlyAuthorized nonReentrant returns (uint256, uint256)
     {
         updateIndices();
 
@@ -492,10 +492,14 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         emit Borrowed(user, collateralAsset, collateralAmount, maxBorrow, borrowIndex);
 
-        return (borrowIndex);
+        return (borrowIndex, maxBorrow);
     }
 
-    function repay(address user, address collateralizedAsset, uint256 repayAmount) public onlyAuthorized {
+    function repay(address user, address collateralizedAsset, uint256 repayAmount)
+    public
+    onlyAuthorized
+    returns(uint256) 
+    {
         updateIndices();
 
         uint256 loanPrincipal = ICradleAccount(user).getLoanAmount(address(this), collateralizedAsset);
@@ -533,11 +537,14 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         }
 
         emit Repaid(user, collateralizedAsset, repayAmount, principalRepaid, interestPaid);
+
+        return (collateralToUnlock);
     }
 
     function liquidate(address liquidator, address borrower, uint256 debtToCover, address collateralAsset)
         public
         onlyAuthorized nonReentrant
+        returns (uint256)
     {
         updateIndices();
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
@@ -575,5 +582,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         ICradleAccount(borrower).transferAsset(liquidator, collateralAsset, collateralAmountWithBonus);
 
         emit Liquidated(liquidator, borrower, collateralAsset, debtToCover, collateralAmountWithBonus);
+
+        return (collateralAmountWithBonus);
     }
 }
