@@ -123,7 +123,7 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
         address owner,
         uint256 amount // amount of listed asset redeem
     ) public onlyAuthorized nonReentrant returns (uint256) {
-        if(status != ListingStatus.Open || status != ListingStatus.Cancelled || status != ListingStatus.Paused){
+        if(status != ListingStatus.Open && status != ListingStatus.Cancelled && status != ListingStatus.Paused){
             revert("LISTING_NOT_OPEN");
         }
 
