@@ -16,7 +16,7 @@ contract CradleListingFactory is AbstractContractAuthority {
         uint256 max_supply,
         address asset,
         address purchase_asset,
-        uint256 _purchase_price,
+        uint256 purchase_price,
         address beneficiary,
         address shadow_asset
     ) public onlyAuthorized returns(address) {
@@ -27,7 +27,7 @@ contract CradleListingFactory is AbstractContractAuthority {
             max_supply,
             asset,
             purchase_asset,
-            _purchase_price,
+            purchase_price,
             beneficiary,
             shadow_asset
         );
