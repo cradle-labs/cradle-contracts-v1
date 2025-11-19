@@ -4,7 +4,7 @@ import {ICradleAccount} from "./CradleAccount.sol";
 import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
 import { NativeAsset } from "./NativeAsset.sol";
-
+import { IERC20Metadata } from "@openzeppelin/token/ERC20/extensions/IERC20Metadata.sol";
 /**
 AbstractCradleNativeListing
 - this contract controls the listing process before the tokens are actually traded on the cradle orderbook.
@@ -23,16 +23,16 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
     address fee_collector;
     uint256 fee = 50;
     uint256 public constant BASE_POINT = 10000;
-    address public listing_reserve; // the address where incoming funds will go
-    address public listing_beneficiary;
-    uint256 public listing_max_supply; // max amount of token to be issued for this listing(there can be multiple listings of the same token)
-    NativeAsset public listed_asset;
+    address public reserve; // the address where incoming funds will go
+    address public beneficiary;
+    uint256 public max_supply; // max amount of token to be issued for this listing(there can be multiple listings of the same token)
+    address public listed_asset; // asset this listing is issuing 
     /**
     for the purpouses of keeping track of who actually participated in this listing
     for all purpouses it's just a shadow of the listed asset itself but for future checks and also for redeeming with the returnAsset. this will make sure we only distribute to valid users who purchased. this helps account for when an asset is listed multiple times
      */
-    NativeAsset public accounting_asset; // 
-    address public purchase_asset;
+    address public participation_asset; // the shadow asset meant to be tied to this specific trade(marks that a user got the amount of tokens they have in their account specifically through this listing)
+    address public purchase_asset; // asset that the listed asset will be bought with 
     uint256 public total_distributed = 0;
     uint256 public purchase_price;
     uint256 public raised_asset_amount = 0;
@@ -59,24 +59,24 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
     constructor(
         address aclContract,
         address fee_collector_add,
-        address reserve,
-        uint256 max_supply,
-        address asset,
+        address _reserve,
+        uint256 _max_supply,
+        address _listed_asset,
         address _purchase_asset,
         uint256 _purchase_price,
-        address beneficiary,
-        address shadow_asset // for accounting 
+        address _beneficiary,
+        address _participation_asset // for accounting 
     )
     AbstractContractAuthority(aclContract, uint64(1))
     {
         fee_collector = fee_collector_add;
-        listing_reserve = reserve;
-        listing_max_supply = max_supply;
+        reserve = _reserve;
+        max_supply = _max_supply;
         purchase_asset = _purchase_asset;
-        listed_asset = NativeAsset(asset);
-        accounting_asset = NativeAsset(shadow_asset);
+        listed_asset = _listed_asset;
+        participation_asset = _participation_asset;
         purchase_price = _purchase_price;
-        listing_beneficiary = beneficiary;
+        beneficiary = _beneficiary;
 
     }
 
@@ -94,18 +94,16 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
         }
 
 
-        uint256 remaining = listing_max_supply - total_distributed;
+        uint256 remaining = max_supply - total_distributed;
 
         require(remaining > 0, "LISTING_CLOSED");
         require(remaining >= amount, "AMOUNT_TOO_LARGE");
 
-        uint256 amount_to_transfer = amount * purchase_price;
-        listed_asset.mint(uint64(amount));
-        accounting_asset.mint(uint64(amount));
-        // will handle token association of the account as well as granting kyc for the asset separately
-        listed_asset.airdropTokens(buyer, uint64(amount));
-        accounting_asset.airdropTokens(buyer, uint64(amount));
-        ICradleAccount(buyer).transferAsset(listing_reserve, purchase_asset, amount_to_transfer);
+        uint256 amount_to_transfer = (amount * purchase_price) / IERC20Metadata(listed_asset).decimals();
+        
+        ICradleAccount(reserve).transferAsset(buyer, listed_asset, amount);
+        ICradleAccount(reserve).transferAsset(buyer, participation_asset, amount);
+        ICradleAccount(buyer).transferAsset(reserve, purchase_asset, amount_to_transfer);
         uint256 fee_value = getFee(amount_to_transfer);
         ICradleAccount(buyer).transferAsset(fee_collector, purchase_asset, fee_value);
 
@@ -127,15 +125,15 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
             revert("LISTING_NOT_OPEN");
         }
 
-        uint256 remaining = listing_max_supply - total_distributed;
+        uint256 remaining = max_supply - total_distributed;
 
         require( remaining > 0, "LISTING_CLOSED");
 
-        uint256 amount_to_receive = amount * purchase_price;
-        accounting_asset.wipe(uint64(amount), owner); // if this fails it means the user doesnt have the shadow asset so they might not have participated in this listing
-        listed_asset.wipe(uint64(amount), owner);
+        uint256 amount_to_receive = (amount * purchase_price) / IERC20Metadata(purchase_asset).decimals();
 
-        ICradleAccount(listing_reserve).transferAsset(owner, purchase_asset, amount_to_receive);
+        ICradleAccount(owner).transferAsset(reserve, listed_asset, amount);
+        ICradleAccount(owner).transferAsset(reserve, participation_asset, amount);
+        ICradleAccount(reserve).transferAsset(owner, purchase_asset, amount_to_receive);
 
         total_distributed -= amount;
         raised_asset_amount -= amount_to_receive;
@@ -150,14 +148,14 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
     function withdrawToBeneficiary(
         uint256 amount
     ) public onlyAuthorized nonReentrant {
-        uint256 remaining_supply = listing_max_supply - total_distributed;
+        uint256 remaining_supply = max_supply - total_distributed;
         require(remaining_supply == 0, "LISTING_OPEN");
         require(raised_asset_balance >= amount, "AMOUNT_INVALID");
 
-        ICradleAccount(listing_reserve).transferAsset(listing_beneficiary, purchase_asset, amount);
+        ICradleAccount(reserve).transferAsset(beneficiary, purchase_asset, amount);
         raised_asset_balance -= amount;
 
-        emit Withdrawal(listing_beneficiary, amount);
+        emit Withdrawal(beneficiary, amount);
     }
 
     function getListingStats() external view returns (
@@ -170,7 +168,7 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
 
         return (
             total_distributed,
-            listing_max_supply - total_distributed,
+            max_supply - total_distributed,
             raised_asset_amount,
             raised_asset_balance,
             uint8(status)
