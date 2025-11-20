@@ -99,7 +99,7 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
         require(remaining > 0, "LISTING_CLOSED");
         require(remaining >= amount, "AMOUNT_TOO_LARGE");
 
-        uint256 amount_to_transfer = (amount * purchase_price) / IERC20Metadata(listed_asset).decimals();
+        uint256 amount_to_transfer = (amount * purchase_price) / (10 ** IERC20Metadata(listed_asset).decimals());
         
         ICradleAccount(reserve).transferAsset(buyer, listed_asset, amount);
         ICradleAccount(reserve).transferAsset(buyer, participation_asset, amount);
@@ -129,7 +129,7 @@ abstract contract AbstractCradleNativeListing is AbstractContractAuthority, Reen
 
         require( remaining > 0, "LISTING_CLOSED");
 
-        uint256 amount_to_receive = (amount * purchase_price) / IERC20Metadata(purchase_asset).decimals();
+        uint256 amount_to_receive = (amount * purchase_price) / (10 ** IERC20Metadata(purchase_asset).decimals());
 
         ICradleAccount(owner).transferAsset(reserve, listed_asset, amount);
         ICradleAccount(owner).transferAsset(reserve, participation_asset, amount);
