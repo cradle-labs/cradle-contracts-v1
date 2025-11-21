@@ -513,11 +513,18 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         require(repayAmount <= currentDebt, "Repay amount exceeds debt");
 
-        // Calculate how much principal is being repaid
-        uint256 principalRepaid = (repayAmount * loanIndex) / borrowIndex;
+        uint256 principalRepaid = 0;
+        uint256 collateralToUnlock = 0;
+        if (repayAmount == currentDebt) { // to prevent dust due to rounding
+            principalRepaid = loanPrincipal;
+            collateralToUnlock = collateralLocked;
+        }else {
+            // Calculate how much principal is being repaid
+            principalRepaid = (repayAmount * loanIndex) / borrowIndex;
+            // Calculate proportional collateral to unlock
+            collateralToUnlock = (collateralLocked * principalRepaid) / loanPrincipal;
+        }
 
-        // Calculate proportional collateral to unlock
-        uint256 collateralToUnlock = (collateralLocked * principalRepaid) / loanPrincipal;
 
         // Remove loan lock with updated values
         ICradleAccount(user).removeLoanLock(
