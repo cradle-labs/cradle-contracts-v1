@@ -437,8 +437,8 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         uint256 yieldTokensToMint = (amount * 1e18) / supplyIndex;
 
         totalSupplied += amount;
-
-        ICradleAccount(user).transferAsset(address(reserve), lendingAsset, amount);
+        // TODO: return later
+        // ICradleAccount(user).transferAsset(address(reserve), lendingAsset, amount);
         yieldBearingAsset.mint(uint64(yieldTokensToMint));
         yieldBearingAsset.airdropTokens(user, uint64(yieldTokensToMint));
 
