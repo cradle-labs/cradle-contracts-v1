@@ -14,7 +14,7 @@ contract AssetFactory is AbstractContractAuthority {
         payable
         returns (address, address )
     {
-        BaseAsset asset = new BaseAsset{value: msg.value}(_name, _symbol, address(acl), uint64(0));
+        BaseAsset asset = new BaseAsset{value: msg.value}(_name, _symbol, address(acl), uint64(1));
 
         return (address(asset), asset.token());
     }
