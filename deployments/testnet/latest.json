@@ -1,0 +1,10 @@
+{
+  "AccessController": "0x0a1070f785dE36e603aa563CBfb1ecCE43700Fe4",
+  "AssetFactory": "0xeD19e3684be90AbA58a16Ec5c7bEff4119A96175",
+  "BridgedAssetIssuerFactory": "0xc7103ae3B66D2F95422BB70E76cC246e791CEa24",
+  "CradleAccountFactory": "0x4C3b62dc8088f3Ee2bA0831CdE6584BB0DF16559",
+  "CradleListingFactory": "0x1Ae07014aC865C923A563dAEed71E00d1F27E8d8",
+  "CradleOrderBookSettler": "0x841D056504e6B05b37b5895385Ba98677d2c809D",
+  "LendingPoolFactory": "0x200aE0AFEa7091a745Ac54F3010782D9B1521579",
+  "NativeAssetIssuerFactory": "0x9B3b88F894efc311C271224C95aD1E8A3D1C6AEE"
+}

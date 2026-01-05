@@ -25,13 +25,18 @@ if [ "$NETWORK" == "testnet" ]; then
     # Allow override from env
     RPC_URL="${HEDERA_TESTNET_RPC:-https://testnet.hashio.io/api}"
     echo "Deploying to Hedera Testnet ($RPC_URL)..."
+    export NETWORK_NAME="testnet"
 elif [ "$NETWORK" == "mainnet" ]; then
     RPC_URL="${HEDERA_MAINNET_RPC:-https://mainnet.hashio.io/api}"
     echo "Deploying to Hedera Mainnet ($RPC_URL)..."
+    export NETWORK_NAME="mainnet"
 else
     echo "Usage: ./deploy.sh [testnet|mainnet]"
     exit 1
 fi
+
+# Create deployment directory if it doesn't exist
+mkdir -p deployments/$NETWORK_NAME
 
 echo "Running deployment script..."
 
