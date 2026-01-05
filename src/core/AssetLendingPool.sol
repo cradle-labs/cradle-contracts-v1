@@ -7,7 +7,7 @@ import {CradleLendingAssetManager} from "./CradleLendingAssetManager.sol";
 import {AbstractCradleAssetManager} from "./AbstractCradleAssetManager.sol";
 import {ReentrancyGuard} from "@openzeppelin/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/token/ERC20/IERC20.sol";
-import { IERC20Metadata } from "@openzeppelin/token/ERC20/extensions/IERC20Metadata.sol";
+import {IERC20Metadata} from "@openzeppelin/token/ERC20/extensions/IERC20Metadata.sol";
 
 /**
  * The AssetLendingPool holds util logic for the lending pools
@@ -340,7 +340,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         if (principalBorrowed > 0) {
             currentDebt = calculateCurrentDebt(principalBorrowed, borrowIndex);
             uint8 decimals = IERC20Metadata(collateralAsset).decimals();
-            uint256 precision = 10**decimals;
+            uint256 precision = 10 ** decimals;
             uint256 multiplier = assetMultiplierOracle[collateralAsset];
             uint256 collateralValue = (collateralAmount * multiplier) / precision;
             healthFactor = calculateHealthFactor(collateralValue, currentDebt);
@@ -359,7 +359,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     function getMaxBorrowAmount(uint256 collateralAmount, address collateralAsset) external view returns (uint256) {
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
-            uint256 precision = 10**decimals;
+        uint256 precision = 10 ** decimals;
         uint256 collateralValue = (collateralAmount * multiplier) / precision;
         return (collateralValue * ltv) / BASE_POINT;
     }
@@ -386,7 +386,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         uint256 collateralAmount = ICradleAccount(user).getCollateral(address(this), collateralAsset);
 
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
-        uint256 precision = 10**decimals;
+        uint256 precision = 10 ** decimals;
 
         uint256 currentDebt = calculateCurrentDebt(principalBorrowed, userBorrowIndex);
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
@@ -426,10 +426,19 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         supplyAPY = getSupplyRate();
         borrowAPY = getBorrowRate();
 
-        return (totalSupply, totalBorrow, availableLiquidity, utilizationRate, supplyAPY, borrowAPY, borrowIndex, supplyIndex);
+        return (
+            totalSupply,
+            totalBorrow,
+            availableLiquidity,
+            utilizationRate,
+            supplyAPY,
+            borrowAPY,
+            borrowIndex,
+            supplyIndex
+        );
     }
 
-    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant returns(uint256, uint256) {
+    function deposit(address user, uint256 amount) public onlyAuthorized nonReentrant returns (uint256, uint256) {
         updateIndices();
 
         // Fixed: Multiply before divide to prevent precision loss
@@ -437,7 +446,7 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         uint256 yieldTokensToMint = (amount * 1e18) / supplyIndex;
 
         totalSupplied += amount;
-        
+
         ICradleAccount(user).transferAsset(address(reserve), lendingAsset, amount);
         yieldBearingAsset.mint(uint64(yieldTokensToMint));
         yieldBearingAsset.airdropTokens(user, uint64(yieldTokensToMint));
@@ -447,7 +456,12 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
         return (supplyIndex, yieldTokensToMint);
     }
 
-    function withdraw(address user, uint256 yieldTokenAmount) public onlyAuthorized nonReentrant returns (uint256, uint256) {
+    function withdraw(address user, uint256 yieldTokenAmount)
+        public
+        onlyAuthorized
+        nonReentrant
+        returns (uint256, uint256)
+    {
         updateIndices();
 
         // Fixed: Divide by 1e18 to get actual underlying amount
@@ -469,12 +483,14 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
     function borrow(address user, uint256 collateralAmount, address collateralAsset)
         public
-        onlyAuthorized nonReentrant returns (uint256, uint256)
+        onlyAuthorized
+        nonReentrant
+        returns (uint256, uint256)
     {
         updateIndices();
 
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
-        uint256 precision = 10**decimals;
+        uint256 precision = 10 ** decimals;
 
         uint256 multiplier = getAssetMultiplier(collateralAsset);
         uint256 collateralValue = (collateralAmount * multiplier) / precision;
@@ -496,9 +512,9 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
     }
 
     function repay(address user, address collateralizedAsset, uint256 repayAmount)
-    public
-    onlyAuthorized
-    returns(uint256) 
+        public
+        onlyAuthorized
+        returns (uint256)
     {
         updateIndices();
 
@@ -515,16 +531,16 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
         uint256 principalRepaid = 0;
         uint256 collateralToUnlock = 0;
-        if (repayAmount == currentDebt) { // to prevent dust due to rounding
+        if (repayAmount == currentDebt) {
+            // to prevent dust due to rounding
             principalRepaid = loanPrincipal;
             collateralToUnlock = collateralLocked;
-        }else {
+        } else {
             // Calculate how much principal is being repaid
             principalRepaid = (repayAmount * loanIndex) / borrowIndex;
             // Calculate proportional collateral to unlock
             collateralToUnlock = (collateralLocked * principalRepaid) / loanPrincipal;
         }
-
 
         // Remove loan lock with updated values
         ICradleAccount(user).removeLoanLock(
@@ -550,12 +566,13 @@ contract AssetLendingPool is AbstractContractAuthority, ReentrancyGuard {
 
     function liquidate(address liquidator, address borrower, uint256 debtToCover, address collateralAsset)
         public
-        onlyAuthorized nonReentrant
+        onlyAuthorized
+        nonReentrant
         returns (uint256)
     {
         updateIndices();
         uint8 decimals = IERC20Metadata(collateralAsset).decimals();
-        uint256 precision = 10**decimals;
+        uint256 precision = 10 ** decimals;
 
         uint256 multiplier = assetMultiplierOracle[collateralAsset];
         // Fixed: Multiply by 1e18 then divide by multiplier to get correct collateral amount

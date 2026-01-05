@@ -12,7 +12,7 @@ import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
 abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
     address public reserveToken;
 
-    address public  treasury;
+    address public treasury;
     mapping(string => AbstractCradleAssetManager) public bridgedAssets;
 
     constructor(address _treasury, address aclContract, uint64 allowList, address _reserveToken)
@@ -31,7 +31,7 @@ abstract contract AbstractAssetsIssuer is AbstractContractAuthority {
         external
         payable
         onlyAuthorized
-        returns (address, address )
+        returns (address, address)
     {
         // TODO: metadata missing needs to be added
         AbstractCradleAssetManager asset = _createAsset(_name, _symbol, aclContract, allowList);

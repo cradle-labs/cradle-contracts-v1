@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { Test } from "forge-std/Test.sol";
-import { AssetLendingPool } from "../core/AssetLendingPool.sol";
-import { AccessController } from "../core/AccessController.sol";
-import { CradleLendingAssetManager } from "../core/CradleLendingAssetManager.sol";
-import { MockHTS } from "./utils/MockHTS.sol";
+import {Test} from "forge-std/Test.sol";
+import {AssetLendingPool} from "../core/AssetLendingPool.sol";
+import {AccessController} from "../core/AccessController.sol";
+import {CradleLendingAssetManager} from "../core/CradleLendingAssetManager.sol";
+import {MockHTS} from "./utils/MockHTS.sol";
 
 contract AssetLendingPoolTest is Test {
     AssetLendingPool pool;
     AccessController acl;
     CradleLendingAssetManager yieldAsset;
     MockHTS mockHTS;
-    
+
     address admin;
     address lending;
     address user1;
@@ -22,32 +22,27 @@ contract AssetLendingPoolTest is Test {
         admin = address(this);
         lending = makeAddr("lending");
         user1 = makeAddr("user1");
-        
+
         mockHTS = new MockHTS();
         vm.etch(HTS_PRECOMPILE, address(mockHTS).code);
-        
+
         acl = new AccessController();
         acl.grantAccess(2, admin);
-        
+
         // Create yield bearing asset
         vm.deal(admin, 10 ether);
-        yieldAsset = new CradleLendingAssetManager{value: 0.1 ether}(
-            "Yield Token",
-            "yUSDC",
-            address(acl),
-            2
-        );
-        
+        yieldAsset = new CradleLendingAssetManager{value: 0.1 ether}("Yield Token", "yUSDC", address(acl), 2);
+
         // Create lending pool
         pool = new AssetLendingPool(
-            7500,  // ltv (75%)
-            8000,  // optimalUtilization (80%)
-            200,   // baseRate (2%)
-            400,   // slope1 (4%)
-            6000,  // slope2 (60%)
-            8500,  // liquidationThreshold (85%)
-            500,   // liquidationDiscount (5%)
-            1000,  // reserveFactor (10%)
+            7500, // ltv (75%)
+            8000, // optimalUtilization (80%)
+            200, // baseRate (2%)
+            400, // slope1 (4%)
+            6000, // slope2 (60%)
+            8500, // liquidationThreshold (85%)
+            500, // liquidationDiscount (5%)
+            1000, // reserveFactor (10%)
             lending,
             address(yieldAsset),
             "USDC-Pool",
@@ -132,24 +127,24 @@ contract AssetLendingPoolTest is Test {
     function test_UpdateOracle_UpdatesMultiplierCorrectly() public {
         address asset = makeAddr("asset");
         pool.updateOracle(asset, 2e18);
-        
+
         assertEq(pool.assetMultiplierOracle(asset), 2e18);
     }
 
     function test_UpdateOracle_RevertsWithoutAuthorization() public {
         address asset = makeAddr("asset");
         vm.prank(user1);
-        
+
         vm.expectRevert("Unauthorized");
         pool.updateOracle(asset, 2e18);
     }
 
     function test_UpdateOracle_CanUpdateMultipleTimes() public {
         address asset = makeAddr("asset");
-        
+
         pool.updateOracle(asset, 2e18);
         assertEq(pool.assetMultiplierOracle(asset), 2e18);
-        
+
         pool.updateOracle(asset, 3e18);
         assertEq(pool.assetMultiplierOracle(asset), 3e18);
     }
@@ -159,11 +154,11 @@ contract AssetLendingPoolTest is Test {
         address asset1 = makeAddr("asset1");
         address asset2 = makeAddr("asset2");
         address asset3 = makeAddr("asset3");
-        
+
         pool.updateOracle(asset1, 1e18);
         pool.updateOracle(asset2, 2e18);
         pool.updateOracle(asset3, 5e17);
-        
+
         assertEq(pool.assetMultiplierOracle(asset1), 1e18);
         assertEq(pool.assetMultiplierOracle(asset2), 2e18);
         assertEq(pool.assetMultiplierOracle(asset3), 5e17);

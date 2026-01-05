@@ -9,11 +9,7 @@ import {AccessController} from "./AccessController.sol";
 contract AssetFactory is AbstractContractAuthority {
     constructor(address aclContract) AbstractContractAuthority(aclContract, uint64(0)) {}
 
-    function createAsset(string memory _name, string memory _symbol)
-        external
-        payable
-        returns (address, address )
-    {
+    function createAsset(string memory _name, string memory _symbol) external payable returns (address, address) {
         BaseAsset asset = new BaseAsset{value: msg.value}(_name, _symbol, address(acl), uint64(1));
 
         return (address(asset), asset.token());

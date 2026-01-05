@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { AssetLendingPool } from "./AssetLendingPool.sol";
+import {AssetLendingPool} from "./AssetLendingPool.sol";
 
 contract LendingPoolFactory {
-
-    mapping(string=>address) public pools;
+    mapping(string => address) public pools;
     address controller;
     address aclContract;
 
-    modifier onlyAuthorized(){ 
+    modifier onlyAuthorized() {
         require(msg.sender == controller, "Unauthorized");
         _;
     }
@@ -18,7 +17,6 @@ contract LendingPoolFactory {
         controller = msg.sender;
         aclContract = _aclContract;
     }
-
 
     function createPool(
         uint64 ltv,
@@ -32,10 +30,7 @@ contract LendingPoolFactory {
         address lending,
         address yieldContract,
         string memory lendingPool
-    ) public onlyAuthorized returns (address)  {
-
-
-
+    ) public onlyAuthorized returns (address) {
         AssetLendingPool pool = new AssetLendingPool(
             ltv,
             optimalUtilization,
@@ -57,8 +52,7 @@ contract LendingPoolFactory {
         return address(pool);
     }
 
-
-    function getPool(string memory name)public view returns(address) {
+    function getPool(string memory name) public view returns (address) {
         return pools[name];
     }
-} 
+}

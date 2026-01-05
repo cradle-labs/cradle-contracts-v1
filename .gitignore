@@ -11,3 +11,5 @@ docs/
 
 # Dotenv file
 .env
+out
+broadcast
