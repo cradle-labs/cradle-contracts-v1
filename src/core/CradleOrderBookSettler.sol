@@ -10,11 +10,10 @@ import {AbstractContractAuthority} from "./AbstractContractAuthority.sol";
  */
 
 contract CradleOrderBookSettler is AbstractContractAuthority {
-
     address public order_book_treasury;
     uint256 public fee = 50;
     uint256 public constant BASE_POINT = 10000;
-    
+
     event OrderSettled(
         address indexed bidder,
         address indexed asker,
@@ -28,17 +27,13 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
         order_book_treasury = treasury;
     }
 
-    function splitAmount(
-        uint256 input_amount
-    ) public view returns (uint256, uint256) {
-        uint256 as_fee = (input_amount  * fee) / BASE_POINT;
+    function splitAmount(uint256 input_amount) public view returns (uint256, uint256) {
+        uint256 as_fee = (input_amount * fee) / BASE_POINT;
         uint256 traded = input_amount - as_fee;
         return (as_fee, traded);
     }
 
-    function updateFee(
-        uint256 new_fee
-    ) public onlyAuthorized {
+    function updateFee(uint256 new_fee) public onlyAuthorized {
         fee = new_fee;
     }
 
@@ -59,7 +54,7 @@ contract CradleOrderBookSettler is AbstractContractAuthority {
         ICradleAccount(_bidder).transferAsset(order_book_treasury, askAsset, ask_amount_as_fee);
         ICradleAccount(_asker).transferAsset(_bidder, bidAsset, bid_amount_tradable);
         ICradleAccount(_asker).transferAsset(order_book_treasury, bidAsset, bid_amount_as_fee);
-        
+
         emit OrderSettled(_bidder, _asker, bidAsset, askAsset, bidAssetAmount, askAssetAmount);
     }
 }

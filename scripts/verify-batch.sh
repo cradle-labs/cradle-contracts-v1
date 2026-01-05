@@ -47,18 +47,20 @@ add_contract() {
     echo "  4.  BaseAsset"
     echo "  5.  BridgedAsset"
     echo "  6.  BridgedAssetIssuer"
-    echo "  7.  CradleAccount"
-    echo "  8.  CradleAccountFactory"
-    echo "  9.  CradleLendingAssetManager"
-    echo "  10. CradleListingFactory"
-    echo "  11. CradleNativeListing"
-    echo "  12. CradleOrderBookSettler"
-    echo "  13. LendingPoolFactory"
-    echo "  14. NativeAsset"
-    echo "  15. NativeAssetIssuer"
+    echo "  7.  BridgedAssetIssuerFactory"
+    echo "  8.  CradleAccount"
+    echo "  9.  CradleAccountFactory"
+    echo "  10. CradleLendingAssetManager"
+    echo "  11. CradleListingFactory"
+    echo "  12. CradleNativeListing"
+    echo "  13. CradleOrderBookSettler"
+    echo "  14. LendingPoolFactory"
+    echo "  15. NativeAsset"
+    echo "  16. NativeAssetIssuer"
+    echo "  17. NativeAssetIssuerFactory"
     echo ""
     
-    read -p "Select contract (1-15) or name: " contract_input
+    read -p "Select contract (1-17) or name: " contract_input
     
     case $contract_input in
         1) contract_name="AccessController" ;;
@@ -67,15 +69,17 @@ add_contract() {
         4) contract_name="BaseAsset" ;;
         5) contract_name="BridgedAsset" ;;
         6) contract_name="BridgedAssetIssuer" ;;
-        7) contract_name="CradleAccount" ;;
-        8) contract_name="CradleAccountFactory" ;;
-        9) contract_name="CradleLendingAssetManager" ;;
-        10) contract_name="CradleListingFactory" ;;
-        11) contract_name="CradleNativeListing" ;;
-        12) contract_name="CradleOrderBookSettler" ;;
-        13) contract_name="LendingPoolFactory" ;;
-        14) contract_name="NativeAsset" ;;
-        15) contract_name="NativeAssetIssuer" ;;
+        7) contract_name="BridgedAssetIssuerFactory" ;;
+        8) contract_name="CradleAccount" ;;
+        9) contract_name="CradleAccountFactory" ;;
+        10) contract_name="CradleLendingAssetManager" ;;
+        11) contract_name="CradleListingFactory" ;;
+        12) contract_name="CradleNativeListing" ;;
+        13) contract_name="CradleOrderBookSettler" ;;
+        14) contract_name="LendingPoolFactory" ;;
+        15) contract_name="NativeAsset" ;;
+        16) contract_name="NativeAssetIssuer" ;;
+        17) contract_name="NativeAssetIssuerFactory" ;;
         *) contract_name="$contract_input" ;;
     esac
     
@@ -88,9 +92,15 @@ add_contract() {
             echo "  No constructor arguments needed"
             args=""
             ;;
-        "AssetFactory"|"CradleAccountFactory"|"CradleListingFactory"|"LendingPoolFactory")
+        "AssetFactory"|"CradleListingFactory"|"LendingPoolFactory")
             echo "  Required: aclContract (address)"
             read -p "ACL Contract Address: " args
+            ;;
+        "CradleAccountFactory"|"NativeAssetIssuerFactory"|"BridgedAssetIssuerFactory")
+            echo "  Required: aclContract (address), allowList (uint64)"
+            read -p "ACL Contract Address: " acl
+            read -p "Allow List Level: " level
+            args="$acl $level"
             ;;
         "BaseAsset"|"BridgedAsset"|"NativeAsset"|"CradleLendingAssetManager")
             echo "  Required: name (string), symbol (string), aclContract (address), allowList (uint64)"

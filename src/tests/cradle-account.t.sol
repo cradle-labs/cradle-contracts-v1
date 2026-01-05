@@ -1,18 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { Test } from "forge-std/Test.sol";
-import { CradleAccount } from "../core/CradleAccount.sol";
-import { AccessController } from "../core/AccessController.sol";
-import { MockHTS } from "./utils/MockHTS.sol";
-import { MockERC20 } from "./utils/MockERC20.sol";
+import {Test} from "forge-std/Test.sol";
+import {CradleAccount} from "../core/CradleAccount.sol";
+import {AccessController} from "../core/AccessController.sol";
+import {MockHTS} from "./utils/MockHTS.sol";
+import {MockERC20} from "./utils/MockERC20.sol";
 
 contract CradleAccountTest is Test {
     CradleAccount account;
     AccessController acl;
     MockHTS mockHTS;
     MockERC20 token1;
-    
+
     address admin;
     address user1;
     address user2;
@@ -27,15 +27,15 @@ contract CradleAccountTest is Test {
         admin = address(this);
         user1 = makeAddr("user1");
         user2 = makeAddr("user2");
-        
+
         mockHTS = new MockHTS();
         vm.etch(HTS_PRECOMPILE, address(mockHTS).code);
-        
+
         acl = new AccessController();
         acl.grantAccess(1, admin);
-        
+
         account = new CradleAccount("controller123", address(acl), 1);
-        
+
         // Create a mock ERC20 token and give the account some balance
         token1 = new MockERC20("Test Token", "TEST");
         token1.mint(address(account), 10000);
@@ -57,13 +57,13 @@ contract CradleAccountTest is Test {
     // Receive Function Tests
     function test_Receive_AcceptsEther() public {
         vm.deal(user1, 1 ether);
-        
+
         vm.expectEmit(true, false, false, true);
         emit DepositReceived(user1, 0.5 ether);
-        
+
         vm.prank(user1);
         (bool success,) = address(account).call{value: 0.5 ether}("");
-        
+
         assertTrue(success);
         assertEq(address(account).balance, 0.5 ether);
     }
@@ -73,7 +73,7 @@ contract CradleAccountTest is Test {
         address newToken = makeAddr("newToken");
         vm.expectEmit(true, false, false, true);
         emit TokenAssociated(newToken);
-        
+
         account.associateToken(newToken);
     }
 
@@ -88,7 +88,7 @@ contract CradleAccountTest is Test {
     function test_LockAsset_SucceedsWithAuthorization() public {
         vm.expectEmit(true, false, false, true);
         emit AssetLocked(address(token1), 1000, 1000);
-        
+
         account.lockAsset(address(token1), 1000);
     }
 
@@ -96,7 +96,7 @@ contract CradleAccountTest is Test {
         vm.expectEmit(true, false, false, true);
         emit AssetLocked(address(token1), 1000, 1000);
         account.lockAsset(address(token1), 1000);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetLocked(address(token1), 500, 1500);
         account.lockAsset(address(token1), 500);
@@ -111,16 +111,16 @@ contract CradleAccountTest is Test {
     // unlockAsset Tests
     function test_UnlockAsset_SucceedsWithAuthorization() public {
         account.lockAsset(address(token1), 1000);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetUnlocked(address(token1), 500, 500);
-        
+
         account.unlockAsset(address(token1), 500);
     }
 
     function test_UnlockAsset_DecreasesTotalLocked() public {
         account.lockAsset(address(token1), 1000);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetUnlocked(address(token1), 300, 700);
         account.unlockAsset(address(token1), 300);
@@ -128,7 +128,7 @@ contract CradleAccountTest is Test {
 
     function test_UnlockAsset_RevertsWithoutAuthorization() public {
         account.lockAsset(address(token1), 1000);
-        
+
         vm.prank(user1);
         vm.expectRevert("Unauthorized");
         account.unlockAsset(address(token1), 500);
@@ -136,7 +136,7 @@ contract CradleAccountTest is Test {
 
     function test_UnlockAsset_RevertsIfInsufficientLocked() public {
         account.lockAsset(address(token1), 1000);
-        
+
         vm.expectRevert("Cannot unlock more than locked");
         account.unlockAsset(address(token1), 1500);
     }
@@ -151,19 +151,19 @@ contract CradleAccountTest is Test {
     function test_Integration_LockAndUnlockMultipleAssets() public {
         MockERC20 token2 = new MockERC20("Token 2", "TK2");
         token2.mint(address(account), 5000);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetLocked(address(token1), 1000, 1000);
         account.lockAsset(address(token1), 1000);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetLocked(address(token2), 2000, 2000);
         account.lockAsset(address(token2), 2000);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetUnlocked(address(token1), 500, 500);
         account.unlockAsset(address(token1), 500);
-        
+
         vm.expectEmit(true, false, false, true);
         emit AssetUnlocked(address(token2), 1000, 1000);
         account.unlockAsset(address(token2), 1000);

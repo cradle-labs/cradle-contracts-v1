@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { Test } from "forge-std/Test.sol";
-import { CradleNativeListing } from "../core/CradleNativeListing.sol";
-import { AccessController } from "../core/AccessController.sol";
-import { MockHTS } from "./utils/MockHTS.sol";
+import {Test} from "forge-std/Test.sol";
+import {CradleNativeListing} from "../core/CradleNativeListing.sol";
+import {AccessController} from "../core/AccessController.sol";
+import {MockHTS} from "./utils/MockHTS.sol";
 
 contract CradleNativeListingTest is Test {
     CradleNativeListing listing;
     AccessController acl;
     MockHTS mockHTS;
-    
+
     address admin;
     address feeCollector;
     address reserve;
@@ -28,23 +28,15 @@ contract CradleNativeListingTest is Test {
         purchaseAsset = makeAddr("purchaseAsset");
         beneficiary = makeAddr("beneficiary");
         shadowAsset = makeAddr("shadowAsset");
-        
+
         mockHTS = new MockHTS();
         vm.etch(HTS_PRECOMPILE, address(mockHTS).code);
-        
+
         acl = new AccessController();
         acl.grantAccess(1, admin);
-        
+
         listing = new CradleNativeListing(
-            address(acl),
-            feeCollector,
-            reserve,
-            1000000,
-            asset,
-            purchaseAsset,
-            100,
-            beneficiary,
-            shadowAsset
+            address(acl), feeCollector, reserve, 1000000, asset, purchaseAsset, 100, beneficiary, shadowAsset
         );
     }
 

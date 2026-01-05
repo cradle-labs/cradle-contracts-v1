@@ -126,8 +126,7 @@ contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
      * transferAsset
      */
     function transferAsset(address to, address asset, uint256 amount) public onlyAuthorized nonReentrant {
-
-        if(asset == address(0)) {
+        if (asset == address(0)) {
             uint256 tradableHbarBalance = getTradableBalance(asset);
             if (amount > tradableHbarBalance) {
                 revert("insufficient HBAR to complete transfer");
@@ -152,7 +151,7 @@ contract CradleAccount is AbstractContractAuthority, ReentrancyGuard {
 
     function transferHbar(address to, uint256 amount) public onlyAuthorized nonReentrant {
         require(address(this).balance >= amount, "Insufficient HBAR balance");
-        (bool success, ) = to.call{value: amount}("");
+        (bool success,) = to.call{value: amount}("");
         require(success, "HBAR transfer failed");
 
         emit AssetTransferred(to, address(0), amount);

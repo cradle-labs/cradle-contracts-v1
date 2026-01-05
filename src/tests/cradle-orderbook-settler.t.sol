@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import { Test } from "forge-std/Test.sol";
-import { CradleOrderBookSettler } from "../core/CradleOrderBookSettler.sol";
-import { AccessController } from "../core/AccessController.sol";
-import { MockHTS } from "./utils/MockHTS.sol";
+import {Test} from "forge-std/Test.sol";
+import {CradleOrderBookSettler} from "../core/CradleOrderBookSettler.sol";
+import {AccessController} from "../core/AccessController.sol";
+import {MockHTS} from "./utils/MockHTS.sol";
 
 contract CradleOrderBookSettlerTest is Test {
     CradleOrderBookSettler settler;
     AccessController acl;
     MockHTS mockHTS;
-    
+
     address admin;
     address treasury;
     address user1;
@@ -29,13 +29,13 @@ contract CradleOrderBookSettlerTest is Test {
         admin = address(this);
         treasury = makeAddr("treasury");
         user1 = makeAddr("user1");
-        
+
         mockHTS = new MockHTS();
         vm.etch(HTS_PRECOMPILE, address(mockHTS).code);
-        
+
         acl = new AccessController();
         acl.grantAccess(1, admin);
-        
+
         settler = new CradleOrderBookSettler(address(acl), treasury);
     }
 
@@ -63,30 +63,30 @@ contract CradleOrderBookSettlerTest is Test {
     // splitAmount Tests
     function test_SplitAmount_CalculatesCorrectly() public view {
         (uint256 fee, uint256 traded) = settler.splitAmount(10000);
-        
+
         assertEq(fee, 50); // 0.5% of 10000
         assertEq(traded, 9950);
     }
 
     function test_SplitAmount_WithZeroAmount() public view {
         (uint256 fee, uint256 traded) = settler.splitAmount(0);
-        
+
         assertEq(fee, 0);
         assertEq(traded, 0);
     }
 
     function test_SplitAmount_WithLargeAmount() public view {
         (uint256 fee, uint256 traded) = settler.splitAmount(1000000);
-        
+
         assertEq(fee, 5000); // 0.5% of 1000000
         assertEq(traded, 995000);
     }
 
     function test_SplitAmount_WithCustomFee() public {
         settler.updateFee(100); // 1%
-        
+
         (uint256 fee, uint256 traded) = settler.splitAmount(10000);
-        
+
         assertEq(fee, 100); // 1% of 10000
         assertEq(traded, 9900);
     }
@@ -106,7 +106,7 @@ contract CradleOrderBookSettlerTest is Test {
     function test_UpdateFee_CanSetToZero() public {
         settler.updateFee(0);
         assertEq(settler.fee(), 0);
-        
+
         (uint256 feeAmount, uint256 traded) = settler.splitAmount(10000);
         assertEq(feeAmount, 0);
         assertEq(traded, 10000);
@@ -115,7 +115,7 @@ contract CradleOrderBookSettlerTest is Test {
     function test_UpdateFee_CanSetToMax() public {
         settler.updateFee(10000); // 100%
         assertEq(settler.fee(), 10000);
-        
+
         (uint256 feeAmount, uint256 traded) = settler.splitAmount(10000);
         assertEq(feeAmount, 10000);
         assertEq(traded, 0);
