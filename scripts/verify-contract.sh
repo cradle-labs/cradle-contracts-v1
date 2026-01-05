@@ -34,6 +34,7 @@ get_contract_path() {
         "BaseAsset") echo "src/core/BaseAsset.sol:BaseAsset" ;;
         "BridgedAsset") echo "src/core/BridgedAsset.sol:BridgedAsset" ;;
         "BridgedAssetIssuer") echo "src/core/BridgedAssetIssuer.sol:BridgedAssetIssuer" ;;
+        "BridgedAssetIssuerFactory") echo "src/core/BridgedAssetIssuerFactory.sol:BridgedAssetIssuerFactory" ;;
         "CradleAccount") echo "src/core/CradleAccount.sol:CradleAccount" ;;
         "CradleAccountFactory") echo "src/core/CradleAccountFactory.sol:CradleAccountFactory" ;;
         "CradleLendingAssetManager") echo "src/core/CradleLendingAssetManager.sol:CradleLendingAssetManager" ;;
@@ -43,6 +44,7 @@ get_contract_path() {
         "LendingPoolFactory") echo "src/core/LendingPoolFactory.sol:LendingPoolFactory" ;;
         "NativeAsset") echo "src/core/NativeAsset.sol:NativeAsset" ;;
         "NativeAssetIssuer") echo "src/core/NativeAssetIssuer.sol:NativeAssetIssuer" ;;
+        "NativeAssetIssuerFactory") echo "src/core/NativeAssetIssuerFactory.sol:NativeAssetIssuerFactory" ;;
         *) echo "" ;;
     esac
 }
@@ -56,8 +58,9 @@ get_constructor_sig() {
         "BaseAsset") echo "constructor(string,string,address,uint64)" ;;
         "BridgedAsset") echo "constructor(string,string,address,uint64)" ;;
         "BridgedAssetIssuer") echo "constructor(address,address,address)" ;;
+        "BridgedAssetIssuerFactory") echo "constructor(address,uint64)" ;;
         "CradleAccount") echo "constructor(string,address,uint64)" ;;
-        "CradleAccountFactory") echo "constructor(address)" ;;
+        "CradleAccountFactory") echo "constructor(address,uint64)" ;;
         "CradleLendingAssetManager") echo "constructor(string,string,address,uint64)" ;;
         "CradleListingFactory") echo "constructor(address)" ;;
         "CradleNativeListing") echo "constructor(address,address,uint256,address,address,uint256,address,address)" ;;
@@ -65,6 +68,7 @@ get_constructor_sig() {
         "LendingPoolFactory") echo "constructor(address)" ;;
         "NativeAsset") echo "constructor(string,string,address,uint64)" ;;
         "NativeAssetIssuer") echo "constructor(address,address,address)" ;;
+        "NativeAssetIssuerFactory") echo "constructor(address,uint64)" ;;
         *) echo "" ;;
     esac
 }

@@ -58,5 +58,27 @@ contract DeployScript is Script {
         console.log("LendingPoolFactory deployed at:", address(lendingPoolFactory));
 
         vm.stopBroadcast();
+
+        // Write deployment data to JSON
+        string memory json = "json";
+        vm.serializeAddress(json, "AccessController", address(acl));
+        vm.serializeAddress(json, "CradleOrderBookSettler", address(settler));
+        vm.serializeAddress(json, "AssetFactory", address(assetFactory));
+        vm.serializeAddress(json, "NativeAssetIssuerFactory", address(nativeIssuerFactory));
+        vm.serializeAddress(json, "BridgedAssetIssuerFactory", address(bridgedIssuerFactory));
+        vm.serializeAddress(json, "CradleAccountFactory", address(accountFactory));
+        vm.serializeAddress(json, "CradleListingFactory", address(listingFactory));
+        string memory finalJson = vm.serializeAddress(json, "LendingPoolFactory", address(lendingPoolFactory));
+
+        string memory network = vm.envOr("NETWORK_NAME", string("unknown"));
+        string memory timestamp = vm.toString(block.timestamp);
+        string memory fileName = string.concat("deployments/", network, "/deployment-", timestamp, ".json");
+        
+        // Also write to 'latest.json' for easy access
+        string memory latestFileName = string.concat("deployments/", network, "/latest.json");
+
+        vm.writeJson(finalJson, fileName);
+        vm.writeJson(finalJson, latestFileName);
+        console.log("Deployment artifacts written to:", fileName);
     }
 }
