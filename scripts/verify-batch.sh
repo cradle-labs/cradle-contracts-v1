@@ -235,7 +235,7 @@ while true; do
                     echo -e "${BLUE}Verifying ($((i+1))/${#CONTRACTS_TO_VERIFY[@]}): ${CONTRACTS_TO_VERIFY[$i]}${NC}"
                     echo -e "${BLUE}═══════════════════════════════════════════════════════${NC}"
                     
-                    if bash "$VERIFY_SCRIPT" "${CONTRACTS_TO_VERIFY[$i]}" "${ADDRESSES[$i]}" ${CONSTRUCTOR_ARGS[$i]}; then
+                    if eval bash \"$VERIFY_SCRIPT\" \"${CONTRACTS_TO_VERIFY[$i]}\" \"${ADDRESSES[$i]}\" ${CONSTRUCTOR_ARGS[$i]}; then
                         ((success_count++))
                     else
                         ((fail_count++))

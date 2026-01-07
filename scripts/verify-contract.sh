@@ -180,7 +180,7 @@ if [ -n "$CONSTRUCTOR_SIG" ] && [ -n "$CONSTRUCTOR_ARGS_RAW" ]; then
     echo -e "${YELLOW}Constructor Args:${NC} $CONSTRUCTOR_ARGS_RAW"
     
     # Encode constructor arguments
-    ENCODED_ARGS=$(cast abi-encode "$CONSTRUCTOR_SIG" $CONSTRUCTOR_ARGS_RAW)
+    ENCODED_ARGS=$(cast abi-encode "$CONSTRUCTOR_SIG" "${@:3}")
     
     echo -e "${YELLOW}Encoded Args:${NC}    $ENCODED_ARGS"
     echo ""
