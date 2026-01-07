@@ -1,3 +1,4 @@
 @openzeppelin/=lib/openzeppelin-contracts/contracts/
 @hedera/=lib/hedera-smart-contracts/contracts/system-contracts/
 forge-std=lib/forge-std/src/
+hedera-forking=lib/hedera-forking/contracts/
